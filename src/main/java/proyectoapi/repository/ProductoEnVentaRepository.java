@@ -12,4 +12,6 @@ public interface ProductoEnVentaRepository extends JpaRepository<ProductoEnVenta
     List<ProductoEnVenta> findByUsuarioAndStockGreaterThan(Usuario usuario, int stock);
     
     ProductoEnVenta findByUsuarioAndProductoId(Usuario usuario, Long productoId);
+
+    List<ProductoEnVenta> findAllByOrderByProductoTituloAsc();
 }
