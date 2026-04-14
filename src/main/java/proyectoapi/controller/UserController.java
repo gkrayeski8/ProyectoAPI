@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import proyectoapi.dto.PublicacionDTO;
-//import proyectoapi.model.Producto;
+import proyectoapi.dto.UsuarioRequestDTO;
+import proyectoapi.dto.UsuarioResponseDTO;
 import proyectoapi.model.ProductoEnVenta;
 import proyectoapi.model.Usuario;
 import proyectoapi.service.UsuarioService;
@@ -23,12 +24,12 @@ public class UserController {
     private UsuarioService usuarioService;
 
     @PostMapping("/auth/register")
-    public Usuario registrarUsuario(@RequestBody Usuario usuario) {
+    public UsuarioResponseDTO registrarUsuario(@RequestBody UsuarioRequestDTO request) {
         return usuarioService.createUser(
-                usuario.getNombre(),
-                usuario.getApellido(),
-                usuario.getEmail(),
-                usuario.getPassword());
+                request.getNombre(),
+                request.getApellido(),
+                request.getEmail(),
+                request.getPassword());
     }
 
     @GetMapping("/vendedores")

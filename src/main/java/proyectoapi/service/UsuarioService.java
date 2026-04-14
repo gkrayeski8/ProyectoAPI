@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import proyectoapi.dto.UsuarioResponseDTO;
 import proyectoapi.model.Producto;
 import proyectoapi.model.ProductoEnVenta;
 import proyectoapi.model.Usuario;
@@ -26,13 +27,20 @@ public class UsuarioService {
         this.productoRepository = productoRepository;
     }
 
-    public Usuario createUser(String nombre, String apellido, String email, String password){
+    public UsuarioResponseDTO createUser(String nombre, String apellido, String email, String password) {
         Usuario usuario = new Usuario();
         usuario.setNombre(nombre);
         usuario.setApellido(apellido);
         usuario.setEmail(email);
         usuario.setPassword(password);
-        return usuarioRepository.save(usuario);
+        Usuario saved = usuarioRepository.save(usuario);
+
+        UsuarioResponseDTO response = new UsuarioResponseDTO();
+        response.setId(saved.getId());
+        response.setNombre(saved.getNombre());
+        response.setApellido(saved.getApellido());
+        response.setEmail(saved.getEmail());
+        return response;
     }
 
     public Usuario iniciarSesion(String email, String password) {
