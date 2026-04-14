@@ -1,43 +1,40 @@
 package proyectoapi.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
 import lombok.Data;
-import jakarta.persistence.FetchType;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
-@Table(name = "compras_usuario")
-public class CompraProducto {
+@Table(name = "ventas")
+public class Venta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
-    @ManyToOne
-    @JoinColumn(name = "producto_id", nullable = false)
-    private ProductoEnVenta producto;
+    @Column(nullable = false)
+    private LocalDateTime fechaVenta;
 
     @Column(nullable = false)
-    private int cantidad;
+    private Double total;
 
-    @Column(nullable = false)
-    private LocalDateTime fechaCompra;
-
-    @Column(nullable = false)
-    private Double precioUnitario;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "venta_id")
-    private Venta venta;
+    @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CompraProducto> items = new ArrayList<>();
 }
