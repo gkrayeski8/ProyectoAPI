@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import proyectoapi.dto.PublicacionDTO;
-import proyectoapi.model.Producto;
+//import proyectoapi.model.Producto;
 import proyectoapi.model.ProductoEnVenta;
 import proyectoapi.model.Usuario;
 import proyectoapi.service.UsuarioService;
@@ -18,28 +18,26 @@ import proyectoapi.service.UsuarioService;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-    
+
     @Autowired
     private UsuarioService usuarioService;
-    
+
     @PostMapping("/auth/register")
-    public Usuario registrarUsuario(@RequestBody Usuario usuario){
+    public Usuario registrarUsuario(@RequestBody Usuario usuario) {
         return usuarioService.createUser(
-            usuario.getNombre(),
-            usuario.getApellido(),
-            usuario.getEmail(),
-            usuario.getPassword()
-        );
+                usuario.getNombre(),
+                usuario.getApellido(),
+                usuario.getEmail(),
+                usuario.getPassword());
     }
 
-
     @GetMapping("/vendedores")
-    public List<Usuario> obtenerVendedores(){
+    public List<Usuario> obtenerVendedores() {
         return usuarioService.getVendedores();
     }
 
     @PostMapping("/product/publish")
-    public ProductoEnVenta publicar(@RequestBody PublicacionDTO data){
+    public ProductoEnVenta publicar(@RequestBody PublicacionDTO data) {
         return usuarioService.publicarProducto(data.getProducto(), data.getUsuarioId(), data.getStock());
     }
 }
