@@ -1,18 +1,26 @@
 package proyectoapi.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
+import proyectoapi.model.Producto;
+import proyectoapi.model.ProductoEnVenta;
 import proyectoapi.model.Usuario;
+import proyectoapi.repository.ProductoEnVentaRepository;
 import proyectoapi.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
 
 @Service
 @Transactional
 public class UsuarioService {
-    private final UsuarioRepository usuarioRepository;
 
-    public UsuarioService(UsuarioRepository usuarioRepository) {
+    private final UsuarioRepository usuarioRepository;
+    private final ProductoEnVentaRepository productoEnVentaRepository;
+
+    public UsuarioService(UsuarioRepository usuarioRepository, ProductoEnVentaRepository productoEnVentaRepository) {
         this.usuarioRepository = usuarioRepository;
+        this.productoEnVentaRepository = productoEnVentaRepository;
     }
 
     public Usuario createUser(String nombre, String apellido, String email, String password){
@@ -48,4 +56,21 @@ public class UsuarioService {
         }
     }
 
+
+    public List<Usuario> getVendedores(){
+        return usuarioRepository.findVendedores();
+    }
+
+    public ProductoEnVenta publicarProducto(Producto producto, Long id, Integer stock){
+        Usuario user = usuarioRepository.findById(id).orElse(null);
+        if (user == null){
+            throw new RuntimeException("Usuario no encontrado con ID: " + id);
+        }
+        ProductoEnVenta nuevoProductoVenta = new ProductoEnVenta();
+        nuevoProductoVenta.setUsuario(user);
+        nuevoProductoVenta.setProducto(producto);
+        nuevoProductoVenta.setStock(stock);
+        user.getProductosEnVenta().add(nuevoProductoVenta);
+        return productoEnVentaRepository.save(nuevoProductoVenta);
+    }
 }
