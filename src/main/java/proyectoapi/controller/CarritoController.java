@@ -19,8 +19,6 @@ public class CarritoController {
     @Autowired
     private CarritoService carritoService;
 
-    // IMPORTANTE: estos errores parecen ser porque al ide le pinta fallar, pero
-    // funciona
     @PostMapping("/agregar")
     public CarritoResponseDTO addProductCart(@RequestBody CarritoProductoDTO data) {
         return carritoService.addProductCart(data.getProductoId(), data.getUsuarioId(), data.getCantidad());
