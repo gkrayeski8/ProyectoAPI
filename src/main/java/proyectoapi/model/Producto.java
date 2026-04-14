@@ -20,4 +20,13 @@ public class Producto {
 
     @Column(nullable = false)
     private Integer precio;
+
+    @Column
+    private String descripcion;
+
+    @Column
+    private String categoria;
+
+    @Column
+    private String urlImagen;
 }

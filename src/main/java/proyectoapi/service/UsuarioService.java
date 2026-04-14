@@ -77,4 +77,11 @@ public class UsuarioService {
         user.getProductosEnVenta().add(nuevoProductoVenta);
         return productoEnVentaRepository.save(nuevoProductoVenta);
     }
+
+    public void eliminarProducto(Long id) {
+        if (!productoEnVentaRepository.existsById(id)) {
+            throw new RuntimeException("Producto en venta no encontrado con ID: " + id);
+        }
+        productoEnVentaRepository.deleteById(id);
+    }
 }
