@@ -11,7 +11,7 @@ services:
       - MYSQL_DATABASE=ecommerce_db3
       - MYSQL_ROOT_PASSWORD=root
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       timeout: 20s
       retries: 10
     volumes:
@@ -22,7 +22,7 @@ services:
     build: .
     container_name: ecommerce_api
     ports:
-      - "8081:8080"
+      - "8080:8080"
     environment:
       # Sobrescribimos las variables definidas en tu application.properties
       # para apuntar al nombre del contenedor de la BD ('db') en lugar de localhost
