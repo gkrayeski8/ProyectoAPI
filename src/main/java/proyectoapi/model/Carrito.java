@@ -17,7 +17,7 @@ public class Carrito {
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ItemCarrito> items = new ArrayList<>();
 
     public Double getTotal() {

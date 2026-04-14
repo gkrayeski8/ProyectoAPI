@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import proyectoapi.dto.CarritoProductoDTO;
-import proyectoapi.model.Carrito;
+import proyectoapi.dto.CarritoResponseDTO;
 import proyectoapi.service.CarritoService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,13 +19,15 @@ public class CarritoController {
     @Autowired
     private CarritoService carritoService;
 
+    // IMPORTANTE: estos errores parecen ser porque al ide le pinta fallar, pero
+    // funciona
     @PostMapping("/agregar")
-    public Carrito addProductCart(@RequestBody CarritoProductoDTO data) {
+    public CarritoResponseDTO addProductCart(@RequestBody CarritoProductoDTO data) {
         return carritoService.addProductCart(data.getProductoId(), data.getUsuarioId(), data.getCantidad());
     }
 
     @GetMapping("/{usuarioId}")
-    public Carrito getCart(@PathVariable Long usuarioId) {
+    public CarritoResponseDTO getCart(@PathVariable Long usuarioId) {
         return carritoService.getCartByUser(usuarioId);
     }
 

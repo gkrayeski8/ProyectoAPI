@@ -2,6 +2,9 @@ package proyectoapi.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import proyectoapi.dto.CarritoResponseDTO;
+import proyectoapi.dto.ItemCarritoResponseDTO;
 import proyectoapi.model.Carrito;
 import proyectoapi.model.ItemCarrito;
 import proyectoapi.model.ProductoEnVenta;
@@ -11,6 +14,8 @@ import proyectoapi.repository.ProductoEnVentaRepository;
 import proyectoapi.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -25,7 +30,11 @@ public class CarritoService {
     @Autowired
     private ProductoEnVentaRepository productoEnVentaRepository;
 
-    public Carrito getCartByUser(Long usuarioId) {
+    public CarritoResponseDTO getCartByUser(Long usuarioId) {
+        return mapToDTO(getCartEntityByUser(usuarioId));
+    }
+
+    private Carrito getCartEntityByUser(Long usuarioId) {
         // Busca usuarios por el id que aparece en el repositorio del carrito
         return carritoRepository.findByUsuarioId(usuarioId)
                 .orElseGet(() -> {
@@ -41,16 +50,18 @@ public class CarritoService {
                 });
     }
 
-    public Carrito addProductCart(Long productoId, Long usuarioId, int cantidad) {
+    public CarritoResponseDTO addProductCart(Long productoId, Long usuarioId, int cantidad) {
         // primero busca el carrito del usuario llamando la funcion de arriba
-        Carrito carrito = getCartByUser(usuarioId);
+        Carrito carrito = getCartEntityByUser(usuarioId);
 
         // busca el producto en venta
         ProductoEnVenta productoVenta = productoEnVentaRepository.findById(productoId)
+                // TODO: crear una excepcion para producto en venta no encontrado
                 .orElseThrow(() -> new RuntimeException("Producto en venta no encontrado"));
 
         // crea una validacion de stock
         if (productoVenta.getStock() < cantidad) {
+            // TODO: crear una excepcion para stock insuficiente
             throw new RuntimeException("No hay stock suficiente para este producto");
         }
 
@@ -69,6 +80,43 @@ public class CarritoService {
         }
 
         // se guarda el carrito en el repository de carritos
-        return carritoRepository.save(carrito);
+        Carrito carritoGuardado = carritoRepository.save(carrito);
+        return mapToDTO(carritoGuardado);
     }
+
+    private ItemCarritoResponseDTO mapItemToDTO(ItemCarrito item) {
+        ItemCarritoResponseDTO dto = new ItemCarritoResponseDTO();
+        dto.setId(item.getId());
+        dto.setProductoId(item.getProducto().getId());
+        dto.setNombreProducto(item.getProducto().getProducto().getTitulo());
+        dto.setCantidad(item.getCantidad());
+
+        // Convertimos el Integer del precio a Double para el DTO
+        Double precio = item.getProducto().getProducto().getPrecio().doubleValue();
+        dto.setPrecioUnitario(precio);
+
+        // Calculamos el subtotal asegurando que sea un Double
+        dto.setSubtotal(precio * item.getCantidad());
+
+        return dto;
+    }
+
+    private CarritoResponseDTO mapToDTO(Carrito carrito) {
+        CarritoResponseDTO dto = new CarritoResponseDTO();
+        dto.setId(carrito.getId());
+        dto.setUsuarioId(carrito.getUsuario().getId());
+
+        List<ItemCarritoResponseDTO> itemsDTO = carrito.getItems().stream()
+                .map(this::mapItemToDTO)
+                .collect(Collectors.toList());
+        dto.setItems(itemsDTO);
+
+        double total = itemsDTO.stream()
+                .mapToDouble(ItemCarritoResponseDTO::getSubtotal)
+                .sum();
+        dto.setTotal(total);
+
+        return dto;
+    }
+
 }
