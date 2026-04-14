@@ -8,6 +8,7 @@ import proyectoapi.model.Producto;
 import proyectoapi.model.ProductoEnVenta;
 import proyectoapi.model.Usuario;
 import proyectoapi.repository.ProductoEnVentaRepository;
+import proyectoapi.repository.ProductoRepository;
 import proyectoapi.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
 
@@ -17,10 +18,12 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final ProductoEnVentaRepository productoEnVentaRepository;
+    private final ProductoRepository productoRepository;
 
-    public UsuarioService(UsuarioRepository usuarioRepository, ProductoEnVentaRepository productoEnVentaRepository) {
+    public UsuarioService(UsuarioRepository usuarioRepository, ProductoEnVentaRepository productoEnVentaRepository, ProductoRepository productoRepository) {
         this.usuarioRepository = usuarioRepository;
         this.productoEnVentaRepository = productoEnVentaRepository;
+        this.productoRepository = productoRepository;
     }
 
     public Usuario createUser(String nombre, String apellido, String email, String password){
@@ -66,6 +69,7 @@ public class UsuarioService {
         if (user == null){
             throw new RuntimeException("Usuario no encontrado con ID: " + id);
         }
+        productoRepository.save(producto);
         ProductoEnVenta nuevoProductoVenta = new ProductoEnVenta();
         nuevoProductoVenta.setUsuario(user);
         nuevoProductoVenta.setProducto(producto);
