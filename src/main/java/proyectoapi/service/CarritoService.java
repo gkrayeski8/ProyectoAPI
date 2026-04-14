@@ -84,6 +84,53 @@ public class CarritoService {
         return mapToDTO(carritoGuardado);
     }
 
+    public CarritoResponseDTO updateProductQuantity(Long productoId, Long usuarioId, int nuevaCantidad) {
+        Carrito carrito = getCartEntityByUser(usuarioId);
+
+        // busca el producto en el carrito
+        Optional<ItemCarrito> itemExistente = carrito.getItems().stream()
+                .filter(item -> item.getProducto().getId().equals(productoId))
+                .findFirst();
+
+        // si existe el producto en el carrito y nueva cantidad es menor a 0 elimina el
+        // producto del carrito
+        // si no existe el producto en el carrito lanza una excepcion
+        if (itemExistente.isPresent()) {
+            if (nuevaCantidad <= 0) {
+                carrito.getItems().remove(itemExistente.get());
+            } else {
+                ProductoEnVenta productoVenta = itemExistente.get().getProducto();
+                if (productoVenta.getStock() < nuevaCantidad) {
+                    // TODO: usar excepcion de stock insuficiente
+                    throw new IllegalStateException("No hay stock suficiente para este producto");
+                }
+                itemExistente.get().setCantidad(nuevaCantidad);
+            }
+        } else {
+            // TODO: usar excepcion de producto no encontrado
+            throw new IllegalArgumentException("El producto no está en el carrito");
+        }
+
+        return mapToDTO(carritoRepository.save(carrito));
+    }
+
+    public CarritoResponseDTO removeProductFromCart(Long productoId, Long usuarioId) {
+        Carrito carrito = getCartEntityByUser(usuarioId);
+
+        // eliminar producto del carrito si el producto seleccionado tiene el mismo id
+        // del producto a eliminar
+        carrito.getItems().removeIf(item -> item.getProducto().getId().equals(productoId));
+        return mapToDTO(carritoRepository.save(carrito));
+    }
+
+    public CarritoResponseDTO emptyCart(Long usuarioId) {
+        Carrito carrito = getCartEntityByUser(usuarioId);
+
+        // funcion para vaciar carrito
+        carrito.getItems().clear();
+        return mapToDTO(carritoRepository.save(carrito));
+    }
+
     private ItemCarritoResponseDTO mapItemToDTO(ItemCarrito item) {
         ItemCarritoResponseDTO dto = new ItemCarritoResponseDTO();
         dto.setId(item.getId());
