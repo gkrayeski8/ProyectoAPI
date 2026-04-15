@@ -22,7 +22,7 @@ public class Carrito {
 
     public Double getTotal() {
         return items.stream()
-                .mapToDouble(item -> item.getProducto().getProducto().getPrecio() * item.getCantidad())
+                .mapToDouble(item -> item.getProducto().getPrecio() * item.getCantidad())
                 .sum();
     }
 }

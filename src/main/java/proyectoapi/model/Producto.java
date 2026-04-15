@@ -18,9 +18,6 @@ public class Producto {
     @Column(nullable = false)
     private String titulo;
 
-    @Column(nullable = false)
-    private Integer precio;
-
     @Column
     private String descripcion;
 
