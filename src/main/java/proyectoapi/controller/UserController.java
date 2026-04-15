@@ -5,12 +5,15 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import proyectoapi.dto.ActualizarPrecioDTO;
 import proyectoapi.dto.LoginDTO;
 import proyectoapi.dto.PublicacionDTO;
 import proyectoapi.dto.UsuarioRequestDTO;
@@ -55,6 +58,11 @@ public class UserController {
     @DeleteMapping("/product/{id}")
     public void eliminarProducto(@PathVariable Long id){
         usuarioService.eliminarProducto(id);
+    }
+
+    @PatchMapping("/product/update")
+    public void actualizarPrecioProducto(@RequestBody ActualizarPrecioDTO actualizarPrecioDTO){
+        usuarioService.updatePrecioProducto(actualizarPrecioDTO.getPrecioNuevo(), actualizarPrecioDTO.getUsuario(), actualizarPrecioDTO.getId());
     }
 
     private UsuarioResponseDTO mapToDTO(Usuario usuario) {

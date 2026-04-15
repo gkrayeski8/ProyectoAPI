@@ -42,7 +42,6 @@ public class ProductoService {
         ProductoResponseDTO dto = new ProductoResponseDTO();
         dto.setId(pve.getId());
         dto.setTitulo(pve.getProducto().getTitulo());
-        dto.setPrecio(pve.getProducto().getPrecio());
         dto.setDescripcion(pve.getProducto().getDescripcion());
         dto.setCategoria(pve.getProducto().getCategoria());
         dto.setUrlImagen(pve.getProducto().getUrlImagen());

@@ -139,7 +139,7 @@ public class CarritoService {
         dto.setCantidad(item.getCantidad());
 
         // Convertimos el Integer del precio a Double para el DTO
-        Double precio = item.getProducto().getProducto().getPrecio().doubleValue();
+        Double precio = item.getProducto().getPrecio().doubleValue();
         dto.setPrecioUnitario(precio);
 
         // Calculamos el subtotal asegurando que sea un Double

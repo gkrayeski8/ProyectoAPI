@@ -77,7 +77,7 @@ public class VentaService {
             compra.setProducto(productoVenta);
             compra.setCantidad(item.getCantidad());
             compra.setFechaCompra(LocalDateTime.now());
-            compra.setPrecioUnitario(productoVenta.getProducto().getPrecio().doubleValue());
+            compra.setPrecioUnitario(productoVenta.getPrecio().doubleValue());
             compra.setVenta(venta);
             
             compras.add(compra);
