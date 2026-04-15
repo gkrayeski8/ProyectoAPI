@@ -72,12 +72,12 @@ public class UsuarioService {
         return usuarioRepository.findVendedores();
     }
 
-    public ProductoEnVenta publicarProducto(Producto producto, Long id, Integer stock){
+    public ProductoEnVenta publicarProducto(String titulo, String descripcion, String categoria, String urlImagen, Long id, Integer stock){
         Usuario user = usuarioRepository.findById(id).orElse(null);
         if (user == null){
             throw new RuntimeException("Usuario no encontrado con ID: " + id);
         }
-        productoRepository.save(producto);
+        Producto producto = crearProducto(titulo, descripcion, categoria, urlImagen);
         ProductoEnVenta nuevoProductoVenta = new ProductoEnVenta();
         nuevoProductoVenta.setUsuario(user);
         nuevoProductoVenta.setProducto(producto);
@@ -106,5 +106,13 @@ public class UsuarioService {
             throw new RuntimeException("no es un producto de usted, actualizacion de precio denegada!");
         }
 
+    }
+    private Producto crearProducto(String titulo, String descripcion, String categoria, String urlImagen){
+        Producto producto = new Producto(); 
+        producto.setTitulo(titulo);
+        producto.setCategoria(categoria);
+        producto.setDescripcion(descripcion);
+        producto.setUrlImagen(urlImagen);
+        return productoRepository.save(producto);
     }
 }

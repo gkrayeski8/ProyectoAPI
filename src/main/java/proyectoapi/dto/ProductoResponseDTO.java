@@ -6,7 +6,6 @@ import lombok.Data;
 public class ProductoResponseDTO {
     private Long id;
     private String titulo;
-    private Integer precio;
     private String descripcion;
     private String categoria;
     private String urlImagen;

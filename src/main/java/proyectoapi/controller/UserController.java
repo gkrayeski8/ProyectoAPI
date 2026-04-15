@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import proyectoapi.dto.ActualizarPrecioDTO;
 import proyectoapi.dto.LoginDTO;
+import proyectoapi.dto.ProductoResponseDTO;
 import proyectoapi.dto.PublicacionDTO;
 import proyectoapi.dto.UsuarioRequestDTO;
 import proyectoapi.dto.UsuarioResponseDTO;
@@ -46,7 +47,7 @@ public class UserController {
 
     @PostMapping("/product/publish")
     public ProductoEnVenta publicar(@RequestBody PublicacionDTO data) {
-        return usuarioService.publicarProducto(data.getProducto(), data.getUsuarioId(), data.getStock());
+        return usuarioService.publicarProducto(data.getTitulo(), data.getDescripcion(), data.getCategoria(), data.getUrlImagen(), data.getUsuarioId(), data.getStock());
     }
 
     @PostMapping("/auth/login")

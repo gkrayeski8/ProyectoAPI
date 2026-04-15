@@ -1,11 +1,12 @@
 package proyectoapi.dto;
-
 import lombok.Data;
-import proyectoapi.model.Producto;
 
 @Data
 public class PublicacionDTO {
-    private Producto producto;
+    private String titulo;
+    private String descripcion;
+    private String categoria;
+    private String urlImagen;
     private Long usuarioId;
     private Integer stock;
 }
