@@ -47,7 +47,7 @@ public class UserController {
 
     @PostMapping("/product/publish")
     public ProductoEnVenta publicar(@RequestBody PublicacionDTO data) {
-        return usuarioService.publicarProducto(data.getTitulo(), data.getDescripcion(), data.getCategoria(), data.getUrlImagen(), data.getUsuarioId(), data.getStock());
+        return usuarioService.publicarProducto(data.getTitulo(), data.getDescripcion(), data.getCategoria(), data.getUrlImagen(), data.getUsuarioId(), data.getStock(), data.getPrecio());
     }
 
     @PostMapping("/auth/login")

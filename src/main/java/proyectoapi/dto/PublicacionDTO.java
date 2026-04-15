@@ -9,4 +9,5 @@ public class PublicacionDTO {
     private String urlImagen;
     private Long usuarioId;
     private Integer stock;
+    private Double precio;
 }

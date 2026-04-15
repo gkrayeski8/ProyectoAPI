@@ -72,7 +72,7 @@ public class UsuarioService {
         return usuarioRepository.findVendedores();
     }
 
-    public ProductoEnVenta publicarProducto(String titulo, String descripcion, String categoria, String urlImagen, Long id, Integer stock){
+    public ProductoEnVenta publicarProducto(String titulo, String descripcion, String categoria, String urlImagen, Long id, Integer stock, Double precio){
         Usuario user = usuarioRepository.findById(id).orElse(null);
         if (user == null){
             throw new RuntimeException("Usuario no encontrado con ID: " + id);
@@ -82,6 +82,7 @@ public class UsuarioService {
         nuevoProductoVenta.setUsuario(user);
         nuevoProductoVenta.setProducto(producto);
         nuevoProductoVenta.setStock(stock);
+        nuevoProductoVenta.setPrecio(precio);
         user.getProductosEnVenta().add(nuevoProductoVenta);
         return productoEnVentaRepository.save(nuevoProductoVenta);
     }
