@@ -99,7 +99,7 @@ public class UsuarioService {
         if (producto == null){
             throw new RuntimeException("Producto no encontrado con ID: " + id);
         }
-        if (usuario.getId() == producto.getUsuario().getId()){
+        if (usuario.getId().equals(producto.getUsuario().getId())){
             producto.setPrecio(precioNuevo);
             productoEnVentaRepository.save(producto);
 
