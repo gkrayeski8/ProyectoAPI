@@ -64,7 +64,6 @@ public class UserController {
     public void actualizarPrecioProducto(@RequestBody ActualizarPrecioDTO actualizarPrecioDTO){
         usuarioService.updatePrecioProducto(actualizarPrecioDTO.getPrecioNuevo(), actualizarPrecioDTO.getUsuario(), actualizarPrecioDTO.getId());
     }
-d
 
     private UsuarioResponseDTO mapToDTO(Usuario usuario) {
         UsuarioResponseDTO dto = new UsuarioResponseDTO();
