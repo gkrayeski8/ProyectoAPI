@@ -36,6 +36,9 @@ public class Usuario {
     @Column(nullable = false)
     private boolean bloqueado = false;
 
+    @Column(nullable = false)
+    private Role role;
+
     @JsonIgnoreProperties({"usuario"})
     @OneToMany(mappedBy = "usuario")
     private List<ProductoEnVenta> productosEnVenta;
