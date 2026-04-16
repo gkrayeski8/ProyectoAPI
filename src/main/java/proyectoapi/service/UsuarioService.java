@@ -12,6 +12,8 @@ import proyectoapi.repository.ProductoEnVentaRepository;
 import proyectoapi.repository.ProductoRepository;
 import proyectoapi.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import proyectoapi.model.Role;
 
 @Service
 @Transactional
@@ -20,19 +22,22 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final ProductoEnVentaRepository productoEnVentaRepository;
     private final ProductoRepository productoRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository usuarioRepository, ProductoEnVentaRepository productoEnVentaRepository, ProductoRepository productoRepository) {
+    public UsuarioService(UsuarioRepository usuarioRepository, ProductoEnVentaRepository productoEnVentaRepository, ProductoRepository productoRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.productoEnVentaRepository = productoEnVentaRepository;
         this.productoRepository = productoRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public UsuarioResponseDTO createUser(String nombre, String apellido, String email, String password) {
+    public UsuarioResponseDTO createUser(String nombre, String apellido, String email, String password, Role role) {
         Usuario usuario = new Usuario();
         usuario.setNombre(nombre);
         usuario.setApellido(apellido);
         usuario.setEmail(email);
-        usuario.setPassword(password);
+        usuario.setPassword(passwordEncoder.encode(password));
+        usuario.setRole(role != null ? role : Role.COMPRADOR);
         Usuario saved = usuarioRepository.save(usuario);
 
         UsuarioResponseDTO response = new UsuarioResponseDTO();

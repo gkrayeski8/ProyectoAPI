@@ -8,4 +8,5 @@ public class UsuarioRequestDTO {
     private String apellido;
     private String email;
     private String password;
+    private proyectoapi.model.Role role;
 }

@@ -31,14 +31,7 @@ public class UserController {
     @Autowired
     private UsuarioService usuarioService;
 
-    @PostMapping("/auth/register")
-    public UsuarioResponseDTO registrarUsuario(@RequestBody UsuarioRequestDTO request) {
-        return usuarioService.createUser(
-                request.getNombre(),
-                request.getApellido(),
-                request.getEmail(),
-                request.getPassword());
-    }
+
 
     @GetMapping("/vendedores")
     public List<Usuario> obtenerVendedores() {
@@ -50,11 +43,7 @@ public class UserController {
         return usuarioService.publicarProducto(data.getTitulo(), data.getDescripcion(), data.getCategoria(), data.getUrlImagen(), data.getUsuarioId(), data.getStock(), data.getPrecio());
     }
 
-    @PostMapping("/auth/login")
-    public UsuarioResponseDTO login(@RequestBody LoginDTO data) {
-        Usuario usuario = usuarioService.iniciarSesion(data.getEmail(), data.getPassword());
-        return mapToDTO(usuario);
-    }
+
 
     @DeleteMapping("/product/{id}")
     public void eliminarProducto(@PathVariable Long id){
