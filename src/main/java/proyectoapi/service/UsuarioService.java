@@ -13,6 +13,10 @@ import proyectoapi.repository.ProductoRepository;
 import proyectoapi.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import proyectoapi.exception.ResourceNotFoundException;
+import proyectoapi.exception.BusinessLogicException;
 import proyectoapi.model.Role;
 
 @Service
@@ -59,16 +63,16 @@ public class UsuarioService {
                 if (contador >= 3) {
                     usuario.setBloqueado(true);
                     usuarioRepository.save(usuario);
-                    throw new RuntimeException("Cuenta bloqueada por múltiples intentos fallidos");
+                    throw new BusinessLogicException("Cuenta bloqueada por múltiples intentos fallidos");
                 }
-                throw new RuntimeException("Contraseña incorrecta");
+                throw new BadCredentialsException("Contraseña incorrecta");
             }
             
         }
         if (usuario == null){
-            throw new RuntimeException("Usuario no encontrado");
+            throw new ResourceNotFoundException("Usuario no encontrado");
         }else {
-            throw new RuntimeException("Cuenta bloqueada, volve mañana a las 12:00");
+            throw new BusinessLogicException("Cuenta bloqueada, volve mañana a las 12:00");
         }
     }
 
@@ -80,7 +84,7 @@ public class UsuarioService {
     public ProductoEnVenta publicarProducto(String titulo, String descripcion, String categoria, String urlImagen, Long id, Integer stock, Double precio){
         Usuario user = usuarioRepository.findById(id).orElse(null);
         if (user == null){
-            throw new RuntimeException("Usuario no encontrado con ID: " + id);
+            throw new ResourceNotFoundException("Usuario no encontrado con ID: " + id);
         }
         Producto producto = crearProducto(titulo, descripcion, categoria, urlImagen);
         ProductoEnVenta nuevoProductoVenta = new ProductoEnVenta();
@@ -94,7 +98,7 @@ public class UsuarioService {
 
     public void eliminarProducto(Long id) {
         if (!productoEnVentaRepository.existsById(id)) {
-            throw new RuntimeException("Producto en venta no encontrado con ID: " + id);
+            throw new ResourceNotFoundException("Producto en venta no encontrado con ID: " + id);
         }
         productoEnVentaRepository.deleteById(id);
     }
@@ -102,14 +106,14 @@ public class UsuarioService {
     public void updatePrecioProducto(Double precioNuevo, Usuario usuario, Long id){
         ProductoEnVenta producto = productoEnVentaRepository.findById(id).orElse(null);
         if (producto == null){
-            throw new RuntimeException("Producto no encontrado con ID: " + id);
+            throw new ResourceNotFoundException("Producto no encontrado con ID: " + id);
         }
         if (usuario.getId().equals(producto.getUsuario().getId())){
             producto.setPrecio(precioNuevo);
             productoEnVentaRepository.save(producto);
 
         }else{
-            throw new RuntimeException("no es un producto de usted, actualizacion de precio denegada!");
+            throw new AccessDeniedException("no es un producto de usted, actualizacion de precio denegada!");
         }
 
     }

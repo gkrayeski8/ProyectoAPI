@@ -16,6 +16,8 @@ import proyectoapi.repository.CarritoRepository;
 import proyectoapi.repository.ProductoEnVentaRepository;
 import proyectoapi.repository.UsuarioRepository;
 import proyectoapi.repository.VentaRepository;
+import proyectoapi.exception.BusinessLogicException;
+import proyectoapi.exception.ResourceNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -41,14 +43,14 @@ public class VentaService {
     public VentaResponseDTO checkout(VentaRequestDTO request) {
         // 1. Obtener usuario
         Usuario usuario = usuarioRepository.findById(request.getUsuarioId())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
         // 2. Obtener carrito
         Carrito carrito = carritoRepository.findByUsuarioId(request.getUsuarioId())
-                .orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Carrito no encontrado"));
 
         if (carrito.getItems().isEmpty()) {
-            throw new IllegalArgumentException("El carrito está vacío");
+            throw new BusinessLogicException("El carrito está vacío");
         }
 
         // 3. Crear cabecera de Venta
@@ -64,7 +66,7 @@ public class VentaService {
             ProductoEnVenta productoVenta = item.getProducto();
             
             if (productoVenta.getStock() < item.getCantidad()) {
-                throw new RuntimeException("No hay stock suficiente para el producto: " + productoVenta.getProducto().getTitulo());
+                throw new BusinessLogicException("No hay stock suficiente para el producto: " + productoVenta.getProducto().getTitulo());
             }
 
             // Descontar stock
@@ -100,7 +102,7 @@ public class VentaService {
     
     public List<VentaResponseDTO> obtenerVentasPorUsuario(Long usuarioId) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
                 
         List<Venta> ventas = ventaRepository.findByUsuarioOrderByFechaVentaDesc(usuario);
         

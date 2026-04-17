@@ -11,6 +11,8 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import proyectoapi.exception.ResourceNotFoundException;
+
 @Service
 @Transactional
 public class ProductoService {
@@ -34,7 +36,7 @@ public class ProductoService {
 
     public ProductoResponseDTO obtenerDetalle(Long id) {
         ProductoEnVenta productoEnVenta = productoEnVentaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Publicación no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Publicación no encontrada"));
         return mapToDTO(productoEnVenta);
     }
 
