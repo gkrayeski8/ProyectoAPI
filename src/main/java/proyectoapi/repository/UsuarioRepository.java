@@ -12,6 +12,6 @@ import org.springframework.stereotype.Repository;
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     public Usuario findByEmail(String email);
 
-    @Query("SELECT DISTINCT u FROM Usuario u JOIN u.productosEnVenta p")
+    @Query("SELECT u FROM Usuario u WHERE u.role = proyectoapi.model.Role.VENDEDOR AND EXISTS (SELECT 1 FROM ProductoEnVenta p WHERE p.usuario = u)")
     public List<Usuario> findVendedores();
 }
