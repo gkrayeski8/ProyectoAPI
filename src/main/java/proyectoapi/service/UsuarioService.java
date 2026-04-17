@@ -103,15 +103,15 @@ public class UsuarioService {
         productoEnVentaRepository.deleteById(id);
     }
 
-    public void updatePrecioProducto(Double precioNuevo, Usuario usuario, Long id){
+    public void updatePrecioProducto(Double precioNuevo, Long idUsuario, Long id){
         ProductoEnVenta producto = productoEnVentaRepository.findById(id).orElse(null);
+        Usuario user = usuarioRepository.findById(id).orElse(null);
         if (producto == null){
             throw new ResourceNotFoundException("Producto no encontrado con ID: " + id);
         }
-        if (usuario.getId().equals(producto.getUsuario().getId())){
+        if (user.getId().equals(idUsuario)){
             producto.setPrecio(precioNuevo);
             productoEnVentaRepository.save(producto);
-
         }else{
             throw new AccessDeniedException("no es un producto de usted, actualizacion de precio denegada!");
         }

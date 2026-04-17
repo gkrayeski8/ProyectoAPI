@@ -53,7 +53,7 @@ public class UserController {
 
     @PatchMapping("/product/update")
     public void actualizarPrecioProducto(@RequestBody ActualizarPrecioDTO actualizarPrecioDTO) {
-        usuarioService.updatePrecioProducto(actualizarPrecioDTO.getPrecioNuevo(), actualizarPrecioDTO.getUsuario(),
+        usuarioService.updatePrecioProducto(actualizarPrecioDTO.getPrecioNuevo(), actualizarPrecioDTO.getUsuarioId(),
                 actualizarPrecioDTO.getId());
     }
 

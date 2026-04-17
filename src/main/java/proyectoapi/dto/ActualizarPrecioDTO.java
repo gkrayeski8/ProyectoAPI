@@ -7,6 +7,6 @@ import proyectoapi.model.Usuario;
 public class ActualizarPrecioDTO {
     Long id;
     Double precioNuevo;
-    Usuario usuario;
+    Long usuarioId;
     
 }
