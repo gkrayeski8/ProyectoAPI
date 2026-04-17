@@ -1,25 +1,29 @@
-# Etapa 1: Build (Construcción del JAR con Maven)
-FROM maven:3.9.6-eclipse-temurin-17 AS build
+# ── Stage 1: Build ──────────────────────────────────────────────────────────────
+FROM eclipse-temurin:17-jdk-alpine AS build
+
 WORKDIR /app
 
-# Copiamos el pom.xml y descargamos dependencias (optimiza la cache de Docker)
+# Copiar descriptor de dependencias primero (mejor cache de layers)
 COPY pom.xml .
-# Hacemos descargar dependencias de manera offline para agilizar futuras builds (opcional)
-RUN mvn dependency:go-offline -B
+COPY .mvn/ .mvn/
+COPY mvnw .
+RUN chmod +x mvnw
 
-# Copiamos el código fuente y compilamos
-COPY src ./src
-RUN mvn clean package -DskipTests
+# Descargar dependencias (cacheado si pom.xml no cambia)
+RUN ./mvnw dependency:go-offline -q
 
-# Etapa 2: Run (Ejecución del JAR en una imagen ligera)
-FROM eclipse-temurin:17-jre
+# Copiar código fuente y compilar
+COPY src/ src/
+RUN ./mvnw package -DskipTests -q
+
+# ── Stage 2: Run ────────────────────────────────────────────────────────────────
+FROM eclipse-temurin:17-jre-alpine
+
 WORKDIR /app
 
-# Copiamos solo el JAR compilado de la etapa anterior
+# Copiar solo el JAR generado en el stage anterior
 COPY --from=build /app/target/*.jar app.jar
 
-# Exponemos el puerto de la aplicación (8080 por defecto en Spring Boot)
 EXPOSE 8080
 
-# Comando para ejecutar la aplicación
 ENTRYPOINT ["java", "-jar", "app.jar"]

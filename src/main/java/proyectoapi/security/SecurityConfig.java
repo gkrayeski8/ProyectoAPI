@@ -2,7 +2,7 @@ package proyectoapi.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+//import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -45,20 +45,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
-            .exceptionHandling(excepcion -> excepcion.authenticationEntryPoint(manejadorNoAutorizado))
-            .sessionManagement(sesion -> sesion.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(autenticacion -> 
-                autenticacion.requestMatchers("/api/auth/**").permitAll()
-                    .requestMatchers("/api/users/product/**").hasRole("VENDEDOR")
-                    .requestMatchers("/api/carrito/**").hasRole("COMPRADOR")
-                    .requestMatchers("/api/compras/**").hasRole("COMPRADOR")
-                    .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                    .anyRequest().authenticated()
-            );
-        
+                .exceptionHandling(excepcion -> excepcion.authenticationEntryPoint(manejadorNoAutorizado))
+                .sessionManagement(sesion -> sesion.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(autenticacion -> autenticacion.requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/users/product/**").hasRole("VENDEDOR")
+                        .requestMatchers("/api/carrito/**").hasRole("COMPRADOR")
+                        .requestMatchers("/api/compras/**").hasRole("COMPRADOR")
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated());
+
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-        
+
         return http.build();
     }
 }

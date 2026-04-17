@@ -8,18 +8,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+//import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import proyectoapi.dto.ActualizarPrecioDTO;
-import proyectoapi.dto.LoginDTO;
-import proyectoapi.dto.ProductoResponseDTO;
+//import proyectoapi.dto.LoginDTO;
+//import proyectoapi.dto.ProductoResponseDTO;
 import proyectoapi.dto.PublicacionDTO;
-import proyectoapi.dto.UsuarioRequestDTO;
+//import proyectoapi.dto.UsuarioRequestDTO;
 import proyectoapi.dto.UsuarioResponseDTO;
-import proyectoapi.model.Producto;
+//import proyectoapi.model.Producto;
 import proyectoapi.model.ProductoEnVenta;
 import proyectoapi.model.Usuario;
 import proyectoapi.service.UsuarioService;
@@ -31,8 +31,6 @@ public class UserController {
     @Autowired
     private UsuarioService usuarioService;
 
-
-
     @GetMapping("/vendedores")
     public List<Usuario> obtenerVendedores() {
         return usuarioService.getVendedores();
@@ -40,19 +38,19 @@ public class UserController {
 
     @PostMapping("/product/publish")
     public ProductoEnVenta publicar(@RequestBody PublicacionDTO data) {
-        return usuarioService.publicarProducto(data.getTitulo(), data.getDescripcion(), data.getCategoria(), data.getUrlImagen(), data.getUsuarioId(), data.getStock(), data.getPrecio());
+        return usuarioService.publicarProducto(data.getTitulo(), data.getDescripcion(), data.getCategoria(),
+                data.getUrlImagen(), data.getUsuarioId(), data.getStock(), data.getPrecio());
     }
 
-
-
     @DeleteMapping("/product/{id}")
-    public void eliminarProducto(@PathVariable Long id){
+    public void eliminarProducto(@PathVariable Long id) {
         usuarioService.eliminarProducto(id);
     }
 
     @PatchMapping("/product/update")
-    public void actualizarPrecioProducto(@RequestBody ActualizarPrecioDTO actualizarPrecioDTO){
-        usuarioService.updatePrecioProducto(actualizarPrecioDTO.getPrecioNuevo(), actualizarPrecioDTO.getUsuario(), actualizarPrecioDTO.getId());
+    public void actualizarPrecioProducto(@RequestBody ActualizarPrecioDTO actualizarPrecioDTO) {
+        usuarioService.updatePrecioProducto(actualizarPrecioDTO.getPrecioNuevo(), actualizarPrecioDTO.getUsuario(),
+                actualizarPrecioDTO.getId());
     }
 
     private UsuarioResponseDTO mapToDTO(Usuario usuario) {
