@@ -36,9 +36,9 @@ public class UserController {
         return usuarioService.getVendedores();
     }
 
-    //TODO: Agregar endpoint para obtener vendedor por id
-    //TODO: agregar endpoint para obtener compradores
-    //TODO: agregar endpoint para obtener compradores por id
+    // TODO: Agregar endpoint para obtener vendedor por id
+    // TODO: agregar endpoint para obtener compradores
+    // TODO: agregar endpoint para obtener compradores por id
 
     @PostMapping("/product/publish")
     public ProductoEnVenta publicar(@RequestBody PublicacionDTO data) {
