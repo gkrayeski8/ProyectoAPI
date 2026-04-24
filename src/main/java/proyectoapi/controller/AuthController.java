@@ -26,6 +26,6 @@ public class AuthController {
     /** Endpoint para registrar nuevos usuarios en la plataforma */
     @PostMapping("/register")
     public ResponseEntity<JwtResponseDTO> registrarUsuario(@RequestBody UsuarioRequestDTO peticion) {
-        return ResponseEntity.ok(authService.registrarUsuario(peticion));
+        return ResponseEntity.status(org.springframework.http.HttpStatus.CREATED).body(authService.registrarUsuario(peticion));
     }
 }

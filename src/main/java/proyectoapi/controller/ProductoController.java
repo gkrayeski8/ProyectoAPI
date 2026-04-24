@@ -1,6 +1,7 @@
 package proyectoapi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,19 +21,19 @@ public class ProductoController {
 
     /** Devuelve la lista completa de productos en el catálogo */
     @GetMapping
-    public List<ProductoResponseDTO> obtenerCatalogo() {
-        return productoService.obtenerCatalogo();
+    public ResponseEntity<List<ProductoResponseDTO>> obtenerCatalogo() {
+        return ResponseEntity.ok(productoService.obtenerCatalogo());
     }
 
     /** Lista todas las categorías disponibles de productos */
     @GetMapping("/categorias")
-    public List<String> obtenerCategorias() {
-        return productoService.obtenerCategorias();
+    public ResponseEntity<List<String>> obtenerCategorias() {
+        return ResponseEntity.ok(productoService.obtenerCategorias());
     }
 
     /** Obtiene la información detallada de un producto por ID */
     @GetMapping("/{id}")
-    public ProductoResponseDTO obtenerDetalle(@PathVariable Long id) {
-        return productoService.obtenerDetalle(id);
+    public ResponseEntity<ProductoResponseDTO> obtenerDetalle(@PathVariable Long id) {
+        return ResponseEntity.ok(productoService.obtenerDetalle(id));
     }
 }

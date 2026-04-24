@@ -3,12 +3,14 @@ package proyectoapi.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-//import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,8 +22,6 @@ import proyectoapi.dto.UsuarioRequestDTO;
 import proyectoapi.dto.UsuarioResponseDTO;
 import proyectoapi.model.Usuario;
 import proyectoapi.service.UsuarioService;
-import org.springframework.web.bind.annotation.PutMapping;
-//import org.springframework.web.bind.annotation.RequestParam;
 
 /** Endpoints para gestión de usuarios y acciones de vendedores */
 @RestController
@@ -33,10 +33,11 @@ public class UserController {
 
     /** Obtiene la lista de todos los vendedores registrados */
     @GetMapping("/vendedores")
-    public List<UsuarioResponseDTO> obtenerVendedores() {
-        return usuarioService.getVendedores().stream()
+    public ResponseEntity<List<UsuarioResponseDTO>> obtenerVendedores() {
+        List<UsuarioResponseDTO> vendedores = usuarioService.getVendedores().stream()
                 .map(this::mapToDTO)
                 .collect(java.util.stream.Collectors.toList());
+        return ResponseEntity.ok(vendedores);
     }
 
     // TODO: Agregar endpoint para obtener vendedor por id
@@ -45,33 +46,38 @@ public class UserController {
 
     /** Permite a un vendedor publicar un nuevo producto */
     @PostMapping("/product/publish")
-    public ProductoResponseDTO publicar(@RequestBody PublicacionDTO data) {
+    public ResponseEntity<ProductoResponseDTO> publicar(@RequestBody PublicacionDTO data) {
         // El usuario se resuelve internamente desde el JWT
-        return usuarioService.publicarProducto(data.getTitulo(), data.getDescripcion(), data.getCategoria(),
-                data.getUrlImagen(), data.getStock(), data.getPrecio());
+        ProductoResponseDTO dto = usuarioService.publicarProducto(data.getTitulo(), data.getDescripcion(),
+                data.getCategoria(), data.getUrlImagen(), data.getStock(), data.getPrecio());
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     /** Elimina un producto publicado por el vendedor */
     @DeleteMapping("/product/{id}")
-    public void eliminarProducto(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminarProducto(@PathVariable Long id) {
         usuarioService.eliminarProducto(id);
+        return ResponseEntity.noContent().build();
     }
 
     /** Actualiza parcialmente el precio de un producto publicado */
     @PatchMapping("/product/update")
-    public void actualizarPrecioProducto(@RequestBody ActualizarPrecioDTO actualizarPrecioDTO) {
+    public ResponseEntity<Void> actualizarPrecioProducto(@RequestBody ActualizarPrecioDTO actualizarPrecioDTO) {
         // La validacion de propietario se hace internamente en el servicio
         usuarioService.updatePrecioProducto(actualizarPrecioDTO.getPrecioNuevo(), actualizarPrecioDTO.getId());
+        return ResponseEntity.noContent().build();
     }
 
+    /** Actualiza el perfil del usuario autenticado */
     @PutMapping("/me")
-    public UsuarioResponseDTO updateProfile(@RequestBody UsuarioRequestDTO usuario) {
-        return usuarioService.updateProfile(usuario);
+    public ResponseEntity<UsuarioResponseDTO> updateProfile(@RequestBody UsuarioRequestDTO usuario) {
+        return ResponseEntity.ok(usuarioService.updateProfile(usuario));
     }
 
+    /** Obtiene el perfil del usuario autenticado */
     @GetMapping("/me")
-    public UsuarioResponseDTO getMyProfile() {
-        return usuarioService.getMyProfile();
+    public ResponseEntity<UsuarioResponseDTO> getMyProfile() {
+        return ResponseEntity.ok(usuarioService.getMyProfile());
     }
 
     /** Convierte una entidad Usuario a UsuarioResponseDTO */
