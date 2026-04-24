@@ -40,10 +40,6 @@ public class UserController {
         return ResponseEntity.ok(vendedores);
     }
 
-    // TODO: Agregar endpoint para obtener vendedor por id
-    // TODO: agregar endpoint para obtener compradores
-    // TODO: agregar endpoint para obtener compradores por id
-
     /** Permite a un vendedor publicar un nuevo producto */
     @PostMapping("/product/publish")
     public ResponseEntity<ProductoResponseDTO> publicar(@RequestBody PublicacionDTO data) {
