@@ -35,6 +35,12 @@ public class Venta {
     @Column(nullable = false)
     private Double total;
 
+    @Column(nullable = false)
+    private String direccionEnvio;
+
+    @Column(nullable = false)
+    private String metodoPago;
+
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CompraProducto> items = new ArrayList<>();
 }

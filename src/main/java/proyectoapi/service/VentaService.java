@@ -61,6 +61,8 @@ public class VentaService {
         Venta venta = new Venta();
         venta.setUsuario(usuario);
         venta.setFechaVenta(LocalDateTime.now());
+        venta.setDireccionEnvio(request.getDireccionEnvio());
+        venta.setMetodoPago(request.getMetodoPago());
         
         double total = 0.0;
         List<CompraProducto> compras = new ArrayList<>();
@@ -122,6 +124,8 @@ public class VentaService {
         dto.setTotalPagado(venta.getTotal());
         dto.setFechaVenta(venta.getFechaVenta());
         dto.setMensaje("Compra realizada con éxito");
+        dto.setDireccionEnvio(venta.getDireccionEnvio());
+        dto.setMetodoPago(venta.getMetodoPago());
         
         List<CompraProductoResponseDTO> itemsDTO = venta.getItems().stream().map(compra -> {
             CompraProductoResponseDTO item = new CompraProductoResponseDTO();

@@ -11,5 +11,7 @@ public class VentaResponseDTO {
     private Double totalPagado;
     private LocalDateTime fechaVenta;
     private String mensaje;
+    private String direccionEnvio;
+    private String metodoPago;
     private List<CompraProductoResponseDTO> items;
 }
