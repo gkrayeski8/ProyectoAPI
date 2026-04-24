@@ -31,4 +31,7 @@ public class ProductoEnVenta {
 
     @Column(nullable = false)
     private Double precio;
+
+    @Column(nullable = false)
+    private boolean activo = true;
 }

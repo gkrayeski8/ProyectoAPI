@@ -14,6 +14,8 @@ import proyectoapi.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import proyectoapi.exception.ResourceNotFoundException;
 import proyectoapi.exception.BusinessLogicException;
 import proyectoapi.model.Role;
@@ -49,7 +51,8 @@ public class UsuarioService {
         usuario.setApellido(apellido);
         usuario.setEmail(email);
         usuario.setPassword(passwordEncoder.encode(password));
-        usuario.setRole(role != null ? role : Role.COMPRADOR);
+        // Evitar que el usuario se asigne el rol de ADMIN maliciosamente
+        usuario.setRole(role != null && role != Role.ADMIN ? role : Role.COMPRADOR);
         Usuario saved = usuarioRepository.save(usuario);
 
         UsuarioResponseDTO response = new UsuarioResponseDTO();
@@ -58,6 +61,23 @@ public class UsuarioService {
         response.setApellido(saved.getApellido());
         response.setEmail(saved.getEmail());
         return response;
+    }
+
+    /** Obtiene el usuario actualmente autenticado desde el JWT */
+    public Usuario getUsuarioAutenticado() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getName() != null && !auth.getName().equals("anonymousUser")) {
+            return usuarioRepository.findByEmail(auth.getName());
+        }
+        return null;
+    }
+
+    /** Valida que el ID enviado coincida con el usuario autenticado */
+    public void validarPropietario(Long idUsuarioEnviado) {
+        Usuario authUser = getUsuarioAutenticado();
+        if (authUser == null || !authUser.getId().equals(idUsuarioEnviado)) {
+            throw new AccessDeniedException("No tienes permisos para acceder o modificar recursos de otro usuario");
+        }
     }
 
     /** Lista todos los usuarios con rol VENDEDOR */
@@ -82,28 +102,30 @@ public class UsuarioService {
         return productoEnVentaRepository.save(nuevoProductoVenta);
     }
 
-    /** Elimina una publicación de producto por su ID */
+    /** Realiza un borrado lógico de una publicación de producto por su ID */
     public void eliminarProducto(Long id) {
-        if (!productoEnVentaRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Producto en venta no encontrado con ID: " + id);
-        }
-        productoEnVentaRepository.deleteById(id);
+        ProductoEnVenta producto = productoEnVentaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Producto en venta no encontrado con ID: " + id));
+
+        validarPropietario(producto.getUsuario().getId());
+
+        producto.setActivo(false);
+        productoEnVentaRepository.save(producto);
     }
 
     /** Actualiza el precio de un producto si pertenece al usuario */
     public void updatePrecioProducto(Double precioNuevo, Long idUsuario, Long id) {
-        ProductoEnVenta producto = productoEnVentaRepository.findById(id).orElse(null);
-        Usuario user = usuarioRepository.findById(id).orElse(null);
-        if (producto == null) {
-            throw new ResourceNotFoundException("Producto no encontrado con ID: " + id);
-        }
-        if (user.getId().equals(idUsuario)) {
-            producto.setPrecio(precioNuevo);
-            productoEnVentaRepository.save(producto);
-        } else {
-            throw new AccessDeniedException("no es un producto de usted, actualizacion de precio denegada!");
+        validarPropietario(idUsuario);
+
+        ProductoEnVenta producto = productoEnVentaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + id));
+
+        if (!producto.getUsuario().getId().equals(idUsuario)) {
+            throw new AccessDeniedException("No es un producto de usted, actualizacion de precio denegada!");
         }
 
+        producto.setPrecio(precioNuevo);
+        productoEnVentaRepository.save(producto);
     }
 
     /** Crea y persiste un objeto Producto base */
