@@ -53,10 +53,10 @@ public class SecurityConfig {
                 .exceptionHandling(excepcion -> excepcion.authenticationEntryPoint(manejadorNoAutorizado))
                 .sessionManagement(sesion -> sesion.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(autenticacion -> autenticacion.requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/users/product/**").hasAuthority("VENDEDOR")
-                        .requestMatchers("/api/carrito/**").hasAuthority("COMPRADOR")
-                        .requestMatchers("/api/compras/**").hasAuthority("COMPRADOR")
-                        .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
+                        .requestMatchers("/api/users/product/**").hasRole("VENDEDOR")
+                        .requestMatchers("/api/carrito/**").hasRole("COMPRADOR")
+                        .requestMatchers("/api/compras/**").hasRole("COMPRADOR")
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider());

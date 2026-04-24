@@ -58,6 +58,7 @@ public class GlobalExceptionHandler {
     /** Captura cualquier otro error no controlado del sistema (500) */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDTO> handleGlobalException(Exception ex) {
+        ex.printStackTrace(); // Agregado para depuración
         ErrorResponseDTO errorResponse = new ErrorResponseDTO(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "Error interno del servidor. Por favor, contacte con el administrador.",
