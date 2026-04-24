@@ -34,21 +34,19 @@ public class CarritoService {
     @Autowired
     private ProductoEnVentaRepository productoEnVentaRepository;
 
-    /** Obtiene el carrito de un usuario como DTO */
-    public CarritoResponseDTO getCartByUser(Long usuarioId) {
-        return mapToDTO(getCartEntityByUser(usuarioId));
+    /** Obtiene el carrito de un usuario autenticado como DTO */
+    public CarritoResponseDTO getCartByUser(String email) {
+        return mapToDTO(getCartEntityByEmail(email));
     }
 
-    /** Busca o crea la entidad Carrito de un usuario */
-    private Carrito getCartEntityByUser(Long usuarioId) {
-        // Busca usuarios por el id que aparece en el repositorio del carrito
-        return carritoRepository.findByUsuarioId(usuarioId)
+    /** Busca o crea la entidad Carrito de un usuario por su email */
+    private Carrito getCartEntityByEmail(String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email);
+        if (usuario == null) {
+            throw new ResourceNotFoundException("Usuario no encontrado");
+        }
+        return carritoRepository.findByUsuarioId(usuario.getId())
                 .orElseGet(() -> {
-                    // si no lo encuentra en el repo de carrito, va a buscar en el repo de usuarios
-                    Usuario usuario = usuarioRepository.findById(usuarioId)
-                            .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
-                    // si encuentra el usuario, crea un nuevo carrito y se lo asigna y lo guarda en
-                    // relacion al usuario
                     Carrito nuevoCarrito = new Carrito();
                     nuevoCarrito.setUsuario(usuario);
                     return carritoRepository.save(nuevoCarrito);
@@ -56,9 +54,8 @@ public class CarritoService {
     }
 
     /** Agrega un producto al carrito validando stock */
-    public CarritoResponseDTO addProductCart(Long productoId, Long usuarioId, int cantidad) {
-        // primero busca el carrito del usuario llamando la funcion de arriba
-        Carrito carrito = getCartEntityByUser(usuarioId);
+    public CarritoResponseDTO addProductCart(Long productoId, String email, int cantidad) {
+        Carrito carrito = getCartEntityByEmail(email);
 
         // busca el producto en venta
         ProductoEnVenta productoVenta = productoEnVentaRepository.findById(productoId)
@@ -89,8 +86,8 @@ public class CarritoService {
     }
 
     /** Actualiza la cantidad de un producto en el carrito */
-    public CarritoResponseDTO updateProductQuantity(Long productoId, Long usuarioId, int nuevaCantidad) {
-        Carrito carrito = getCartEntityByUser(usuarioId);
+    public CarritoResponseDTO updateProductQuantity(Long productoId, String email, int nuevaCantidad) {
+        Carrito carrito = getCartEntityByEmail(email);
 
         // busca el producto en el carrito
         Optional<ItemCarrito> itemExistente = carrito.getItems().stream()
@@ -118,8 +115,8 @@ public class CarritoService {
     }
 
     /** Elimina un producto específico del carrito */
-    public CarritoResponseDTO removeProductFromCart(Long productoId, Long usuarioId) {
-        Carrito carrito = getCartEntityByUser(usuarioId);
+    public CarritoResponseDTO removeProductFromCart(Long productoId, String email) {
+        Carrito carrito = getCartEntityByEmail(email);
 
         // eliminar producto del carrito si el producto seleccionado tiene el mismo id
         // del producto a eliminar
@@ -128,8 +125,8 @@ public class CarritoService {
     }
 
     /** Vacía todos los productos del carrito del usuario */
-    public CarritoResponseDTO emptyCart(Long usuarioId) {
-        Carrito carrito = getCartEntityByUser(usuarioId);
+    public CarritoResponseDTO emptyCart(String email) {
+        Carrito carrito = getCartEntityByEmail(email);
 
         // funcion para vaciar carrito
         carrito.getItems().clear();

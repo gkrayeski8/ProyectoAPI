@@ -7,7 +7,6 @@ public class PublicacionDTO {
     private String descripcion;
     private String categoria;
     private String urlImagen;
-    private Long usuarioId;
     private Integer stock;
     private Double precio;
 }

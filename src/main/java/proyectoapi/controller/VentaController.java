@@ -1,6 +1,8 @@
 package proyectoapi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import proyectoapi.dto.VentaRequestDTO;
 import proyectoapi.dto.VentaResponseDTO;
@@ -16,20 +18,21 @@ public class VentaController {
     @Autowired
     private VentaService ventaService;
 
-    @Autowired
-    private proyectoapi.service.UsuarioService usuarioService;
+    /** Extrae el email del usuario autenticado desde el JWT */
+    private String getEmailAutenticado() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth.getName();
+    }
 
     /** Procesa el checkout finalizando la compra del carrito */
     @PostMapping("/checkout")
     public VentaResponseDTO realizarCheckout(@RequestBody VentaRequestDTO request) {
-        usuarioService.validarPropietario(request.getUsuarioId());
-        return ventaService.checkout(request);
+        return ventaService.checkout(getEmailAutenticado(), request);
     }
 
-    /** Lista todas las compras realizadas por un usuario */
-    @GetMapping("/usuario/{usuarioId}")
-    public List<VentaResponseDTO> obtenerVentasUsuario(@PathVariable Long usuarioId) {
-        usuarioService.validarPropietario(usuarioId);
-        return ventaService.obtenerVentasPorUsuario(usuarioId);
+    /** Lista todas las compras del usuario autenticado */
+    @GetMapping("/mis-compras")
+    public List<VentaResponseDTO> obtenerMisCompras() {
+        return ventaService.obtenerVentasPorUsuario(getEmailAutenticado());
     }
 }

@@ -6,6 +6,4 @@ import lombok.Data;
 public class ActualizarPrecioDTO {
     Long id;
     Double precioNuevo;
-    Long usuarioId;
-
 }

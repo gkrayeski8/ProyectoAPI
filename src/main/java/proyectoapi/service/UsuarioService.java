@@ -88,10 +88,10 @@ public class UsuarioService {
 
     /** Permite a un vendedor publicar un nuevo producto */
     public ProductoResponseDTO publicarProducto(String titulo, String descripcion, String categoria, String urlImagen,
-            Long id, Integer stock, Double precio) {
-        Usuario user = usuarioRepository.findById(id).orElse(null);
+            Integer stock, Double precio) {
+        Usuario user = getUsuarioAutenticado();
         if (user == null) {
-            throw new ResourceNotFoundException("Usuario no encontrado con ID: " + id);
+            throw new ResourceNotFoundException("Usuario autenticado no encontrado");
         }
         Producto producto = crearProducto(titulo, descripcion, categoria, urlImagen);
         ProductoEnVenta nuevoProductoVenta = new ProductoEnVenta();
@@ -126,16 +126,13 @@ public class UsuarioService {
         productoEnVentaRepository.save(producto);
     }
 
-    /** Actualiza el precio de un producto si pertenece al usuario */
-    public void updatePrecioProducto(Double precioNuevo, Long idUsuario, Long id) {
-        validarPropietario(idUsuario);
-
+    /** Actualiza el precio de un producto si pertenece al usuario autenticado */
+    public void updatePrecioProducto(Double precioNuevo, Long id) {
         ProductoEnVenta producto = productoEnVentaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + id));
 
-        if (!producto.getUsuario().getId().equals(idUsuario)) {
-            throw new AccessDeniedException("No es un producto de usted, actualizacion de precio denegada!");
-        }
+        // Valida que el producto pertenezca al usuario del JWT
+        validarPropietario(producto.getUsuario().getId());
 
         producto.setPrecio(precioNuevo);
         productoEnVentaRepository.save(producto);

@@ -42,13 +42,15 @@ public class VentaService {
     private ProductoEnVentaRepository productoEnVentaRepository;
 
     /** Procesa el pago, descuenta stock y genera la venta */
-    public VentaResponseDTO checkout(VentaRequestDTO request) {
-        // 1. Obtener usuario
-        Usuario usuario = usuarioRepository.findById(request.getUsuarioId())
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+    public VentaResponseDTO checkout(String email, VentaRequestDTO request) {
+        // 1. Obtener usuario desde el JWT
+        Usuario usuario = usuarioRepository.findByEmail(email);
+        if (usuario == null) {
+            throw new ResourceNotFoundException("Usuario no encontrado");
+        }
 
         // 2. Obtener carrito
-        Carrito carrito = carritoRepository.findByUsuarioId(request.getUsuarioId())
+        Carrito carrito = carritoRepository.findByUsuarioId(usuario.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Carrito no encontrado"));
 
         if (carrito.getItems().isEmpty()) {
@@ -102,13 +104,13 @@ public class VentaService {
         return mapToDTO(ventaGuardada);
     }
     
-    /** Recupera el historial de compras de un usuario específico */
-    public List<VentaResponseDTO> obtenerVentasPorUsuario(Long usuarioId) {
-        Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
-                
+    /** Recupera el historial de compras del usuario autenticado */
+    public List<VentaResponseDTO> obtenerVentasPorUsuario(String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email);
+        if (usuario == null) {
+            throw new ResourceNotFoundException("Usuario no encontrado");
+        }
         List<Venta> ventas = ventaRepository.findByUsuarioOrderByFechaVentaDesc(usuario);
-        
         return ventas.stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 

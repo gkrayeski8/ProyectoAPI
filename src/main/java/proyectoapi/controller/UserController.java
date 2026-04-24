@@ -17,7 +17,6 @@ import proyectoapi.dto.ActualizarPrecioDTO;
 import proyectoapi.dto.ProductoResponseDTO;
 import proyectoapi.dto.PublicacionDTO;
 import proyectoapi.dto.UsuarioResponseDTO;
-import proyectoapi.model.ProductoEnVenta;
 import proyectoapi.model.Usuario;
 import proyectoapi.service.UsuarioService;
 
@@ -44,9 +43,9 @@ public class UserController {
     /** Permite a un vendedor publicar un nuevo producto */
     @PostMapping("/product/publish")
     public ProductoResponseDTO publicar(@RequestBody PublicacionDTO data) {
-        usuarioService.validarPropietario(data.getUsuarioId());
+        // El usuario se resuelve internamente desde el JWT
         return usuarioService.publicarProducto(data.getTitulo(), data.getDescripcion(), data.getCategoria(),
-                data.getUrlImagen(), data.getUsuarioId(), data.getStock(), data.getPrecio());
+                data.getUrlImagen(), data.getStock(), data.getPrecio());
     }
 
     /** Elimina un producto publicado por el vendedor */
@@ -58,9 +57,8 @@ public class UserController {
     /** Actualiza parcialmente el precio de un producto publicado */
     @PatchMapping("/product/update")
     public void actualizarPrecioProducto(@RequestBody ActualizarPrecioDTO actualizarPrecioDTO) {
-        usuarioService.validarPropietario(actualizarPrecioDTO.getUsuarioId());
-        usuarioService.updatePrecioProducto(actualizarPrecioDTO.getPrecioNuevo(), actualizarPrecioDTO.getUsuarioId(),
-                actualizarPrecioDTO.getId());
+        // La validacion de propietario se hace internamente en el servicio
+        usuarioService.updatePrecioProducto(actualizarPrecioDTO.getPrecioNuevo(), actualizarPrecioDTO.getId());
     }
 
     /** Convierte una entidad Usuario a UsuarioResponseDTO */
