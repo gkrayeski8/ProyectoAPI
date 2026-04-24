@@ -26,7 +26,7 @@ public class ProductoService {
 
     /** Obtiene todos los productos ordenados por título */
     public List<ProductoResponseDTO> obtenerCatalogo() {
-        return productoEnVentaRepository.findAllByOrderByProductoTituloAsc()
+        return productoEnVentaRepository.findByActivoTrueOrderByProductoTituloAsc()
                 .stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
@@ -41,6 +41,9 @@ public class ProductoService {
     public ProductoResponseDTO obtenerDetalle(Long id) {
         ProductoEnVenta productoEnVenta = productoEnVentaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Publicación no encontrada"));
+        if (!productoEnVenta.isActivo()) {
+            throw new ResourceNotFoundException("Publicación no encontrada");
+        }
         return mapToDTO(productoEnVenta);
     }
 

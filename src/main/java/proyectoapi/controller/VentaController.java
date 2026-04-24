@@ -16,15 +16,20 @@ public class VentaController {
     @Autowired
     private VentaService ventaService;
 
+    @Autowired
+    private proyectoapi.service.UsuarioService usuarioService;
+
     /** Procesa el checkout finalizando la compra del carrito */
     @PostMapping("/checkout")
     public VentaResponseDTO realizarCheckout(@RequestBody VentaRequestDTO request) {
+        usuarioService.validarPropietario(request.getUsuarioId());
         return ventaService.checkout(request);
     }
 
     /** Lista todas las compras realizadas por un usuario */
     @GetMapping("/usuario/{usuarioId}")
     public List<VentaResponseDTO> obtenerVentasUsuario(@PathVariable Long usuarioId) {
+        usuarioService.validarPropietario(usuarioId);
         return ventaService.obtenerVentasPorUsuario(usuarioId);
     }
 }

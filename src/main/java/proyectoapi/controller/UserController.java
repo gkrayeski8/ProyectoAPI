@@ -45,6 +45,7 @@ public class UserController {
     /** Permite a un vendedor publicar un nuevo producto */
     @PostMapping("/product/publish")
     public ProductoEnVenta publicar(@RequestBody PublicacionDTO data) {
+        usuarioService.validarPropietario(data.getUsuarioId());
         return usuarioService.publicarProducto(data.getTitulo(), data.getDescripcion(), data.getCategoria(),
                 data.getUrlImagen(), data.getUsuarioId(), data.getStock(), data.getPrecio());
     }
@@ -58,6 +59,7 @@ public class UserController {
     /** Actualiza parcialmente el precio de un producto publicado */
     @PatchMapping("/product/update")
     public void actualizarPrecioProducto(@RequestBody ActualizarPrecioDTO actualizarPrecioDTO) {
+        usuarioService.validarPropietario(actualizarPrecioDTO.getUsuarioId());
         usuarioService.updatePrecioProducto(actualizarPrecioDTO.getPrecioNuevo(), actualizarPrecioDTO.getUsuarioId(),
                 actualizarPrecioDTO.getId());
     }

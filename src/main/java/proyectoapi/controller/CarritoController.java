@@ -21,33 +21,41 @@ public class CarritoController {
     @Autowired
     private CarritoService carritoService;
 
+    @Autowired
+    private proyectoapi.service.UsuarioService usuarioService;
+
     /** Agrega un producto al carrito del usuario */
     @PostMapping("/agregar")
     public CarritoResponseDTO addProductCart(@RequestBody CarritoProductoDTO data) {
+        usuarioService.validarPropietario(data.getUsuarioId());
         return carritoService.addProductCart(data.getProductoId(), data.getUsuarioId(), data.getCantidad());
     }
 
     /** Obtiene el estado actual del carrito del usuario */
     @GetMapping("/{usuarioId}")
     public CarritoResponseDTO getCart(@PathVariable Long usuarioId) {
+        usuarioService.validarPropietario(usuarioId);
         return carritoService.getCartByUser(usuarioId);
     }
 
     /** Modifica la cantidad de un producto ya en el carrito */
     @PutMapping("/actualizar")
     public CarritoResponseDTO updateProductQuantity(@RequestBody CarritoProductoDTO data) {
+        usuarioService.validarPropietario(data.getUsuarioId());
         return carritoService.updateProductQuantity(data.getProductoId(), data.getUsuarioId(), data.getCantidad());
     }
 
     /** Quita un producto específico del carrito */
     @DeleteMapping("/{usuarioId}/producto/{productoId}")
     public CarritoResponseDTO removeProductFromCart(@PathVariable Long usuarioId, @PathVariable Long productoId) {
+        usuarioService.validarPropietario(usuarioId);
         return carritoService.removeProductFromCart(productoId, usuarioId);
     }
 
     /** Elimina todos los productos del carrito del usuario */
     @DeleteMapping("/{usuarioId}/vaciar")
     public CarritoResponseDTO emptyCart(@PathVariable Long usuarioId) {
+        usuarioService.validarPropietario(usuarioId);
         return carritoService.emptyCart(usuarioId);
     }
 
