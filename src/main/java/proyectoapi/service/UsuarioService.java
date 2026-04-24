@@ -14,7 +14,6 @@ import proyectoapi.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.BadCredentialsException;
 import proyectoapi.exception.ResourceNotFoundException;
 import proyectoapi.exception.BusinessLogicException;
 import proyectoapi.model.Role;
@@ -59,31 +58,6 @@ public class UsuarioService {
         response.setApellido(saved.getApellido());
         response.setEmail(saved.getEmail());
         return response;
-    }
-
-    /** Valida el acceso del usuario y gestiona bloqueos */
-    public Usuario iniciarSesion(String email, String password) {
-        Integer contador = 0;
-        Usuario usuario = usuarioRepository.findByEmail(email);
-        while (contador < 3 && usuario != null && !usuario.isBloqueado()) {
-            if (usuario.getPassword().equals(password)) {
-                return usuario;
-            } else {
-                contador++;
-                if (contador >= 3) {
-                    usuario.setBloqueado(true);
-                    usuarioRepository.save(usuario);
-                    throw new BusinessLogicException("Cuenta bloqueada por múltiples intentos fallidos");
-                }
-                throw new BadCredentialsException("Contraseña incorrecta");
-            }
-
-        }
-        if (usuario == null) {
-            throw new ResourceNotFoundException("Usuario no encontrado");
-        } else {
-            throw new BusinessLogicException("Cuenta bloqueada, volve mañana a las 12:00");
-        }
     }
 
     /** Lista todos los usuarios con rol VENDEDOR */
