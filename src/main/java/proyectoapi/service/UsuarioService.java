@@ -29,7 +29,8 @@ public class UsuarioService {
     private final ProductoRepository productoRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository usuarioRepository, ProductoEnVentaRepository productoEnVentaRepository, ProductoRepository productoRepository, PasswordEncoder passwordEncoder) {
+    public UsuarioService(UsuarioRepository usuarioRepository, ProductoEnVentaRepository productoEnVentaRepository,
+            ProductoRepository productoRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.productoEnVentaRepository = productoEnVentaRepository;
         this.productoRepository = productoRepository;
@@ -38,6 +39,12 @@ public class UsuarioService {
 
     /** Crea un nuevo usuario en el sistema */
     public UsuarioResponseDTO createUser(String nombre, String apellido, String email, String password, Role role) {
+        // Verificacion de que el email no exista
+        if (usuarioRepository.findByEmail(email) != null) {
+            throw new BusinessLogicException("Error: El email ya existe");
+        }
+
+        // Creacion del usuario
         Usuario usuario = new Usuario();
         usuario.setNombre(nombre);
         usuario.setApellido(apellido);
@@ -58,7 +65,7 @@ public class UsuarioService {
     public Usuario iniciarSesion(String email, String password) {
         Integer contador = 0;
         Usuario usuario = usuarioRepository.findByEmail(email);
-        while(contador < 3 && usuario != null && !usuario.isBloqueado()) {
+        while (contador < 3 && usuario != null && !usuario.isBloqueado()) {
             if (usuario.getPassword().equals(password)) {
                 return usuario;
             } else {
@@ -70,25 +77,25 @@ public class UsuarioService {
                 }
                 throw new BadCredentialsException("Contraseña incorrecta");
             }
-            
+
         }
-        if (usuario == null){
+        if (usuario == null) {
             throw new ResourceNotFoundException("Usuario no encontrado");
-        }else {
+        } else {
             throw new BusinessLogicException("Cuenta bloqueada, volve mañana a las 12:00");
         }
     }
 
-
     /** Lista todos los usuarios con rol VENDEDOR */
-    public List<Usuario> getVendedores(){
+    public List<Usuario> getVendedores() {
         return usuarioRepository.findVendedores();
     }
 
     /** Permite a un vendedor publicar un nuevo producto */
-    public ProductoEnVenta publicarProducto(String titulo, String descripcion, String categoria, String urlImagen, Long id, Integer stock, Double precio){
+    public ProductoEnVenta publicarProducto(String titulo, String descripcion, String categoria, String urlImagen,
+            Long id, Integer stock, Double precio) {
         Usuario user = usuarioRepository.findById(id).orElse(null);
-        if (user == null){
+        if (user == null) {
             throw new ResourceNotFoundException("Usuario no encontrado con ID: " + id);
         }
         Producto producto = crearProducto(titulo, descripcion, categoria, urlImagen);
@@ -110,23 +117,24 @@ public class UsuarioService {
     }
 
     /** Actualiza el precio de un producto si pertenece al usuario */
-    public void updatePrecioProducto(Double precioNuevo, Long idUsuario, Long id){
+    public void updatePrecioProducto(Double precioNuevo, Long idUsuario, Long id) {
         ProductoEnVenta producto = productoEnVentaRepository.findById(id).orElse(null);
         Usuario user = usuarioRepository.findById(id).orElse(null);
-        if (producto == null){
+        if (producto == null) {
             throw new ResourceNotFoundException("Producto no encontrado con ID: " + id);
         }
-        if (user.getId().equals(idUsuario)){
+        if (user.getId().equals(idUsuario)) {
             producto.setPrecio(precioNuevo);
             productoEnVentaRepository.save(producto);
-        }else{
+        } else {
             throw new AccessDeniedException("no es un producto de usted, actualizacion de precio denegada!");
         }
 
     }
+
     /** Crea y persiste un objeto Producto base */
-    private Producto crearProducto(String titulo, String descripcion, String categoria, String urlImagen){
-        Producto producto = new Producto(); 
+    private Producto crearProducto(String titulo, String descripcion, String categoria, String urlImagen) {
+        Producto producto = new Producto();
         producto.setTitulo(titulo);
         producto.setCategoria(categoria);
         producto.setDescripcion(descripcion);
