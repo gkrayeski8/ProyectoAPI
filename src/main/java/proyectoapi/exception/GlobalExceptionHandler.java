@@ -11,9 +11,11 @@ import proyectoapi.dto.ErrorResponseDTO;
 import java.time.LocalDateTime;
 import org.springframework.security.access.AccessDeniedException;
 
+/** Captura excepciones en toda la app y devuelve respuestas estructuradas */
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    /** Maneja errores cuando no se encuentra un recurso (404) */
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponseDTO> handleResourceNotFoundException(ResourceNotFoundException ex) {
         ErrorResponseDTO errorResponse = new ErrorResponseDTO(
@@ -23,6 +25,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
+    /** Captura errores de lógica de negocio o validaciones (400) */
     @ExceptionHandler(BusinessLogicException.class)
     public ResponseEntity<ErrorResponseDTO> handleBusinessLogicException(BusinessLogicException ex) {
         ErrorResponseDTO errorResponse = new ErrorResponseDTO(
@@ -32,6 +35,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
+    /** Responde a intentos de acceso con credenciales fallidas (401) */
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponseDTO> handleBadCredentialsException(BadCredentialsException ex) {
         ErrorResponseDTO errorResponse = new ErrorResponseDTO(
@@ -41,6 +45,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
 
+    /** Controla el acceso denegado por falta de permisos (403) */
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponseDTO> handleAccessDeniedException(AccessDeniedException ex) {
         ErrorResponseDTO errorResponse = new ErrorResponseDTO(
@@ -50,6 +55,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
     }
 
+    /** Captura cualquier otro error no controlado del sistema (500) */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDTO> handleGlobalException(Exception ex) {
         ErrorResponseDTO errorResponse = new ErrorResponseDTO(

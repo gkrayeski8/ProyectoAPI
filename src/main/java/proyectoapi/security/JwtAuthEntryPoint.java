@@ -10,9 +10,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+/** Maneja errores de autenticación devolviendo código 401 */
 @Component
 public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
 
+    /** Se activa cuando un usuario no autenticado accede a un recurso */
     @Override
     public void commence(HttpServletRequest peticion, HttpServletResponse respuesta,
             AuthenticationException excepcionAuth) throws IOException, ServletException {

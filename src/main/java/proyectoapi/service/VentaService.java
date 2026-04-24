@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/** Procesa órdenes de compra, valida stock y vacía carritos */
 @Service
 @Transactional
 public class VentaService {
@@ -40,6 +41,7 @@ public class VentaService {
     @Autowired
     private ProductoEnVentaRepository productoEnVentaRepository;
 
+    /** Procesa el pago, descuenta stock y genera la venta */
     public VentaResponseDTO checkout(VentaRequestDTO request) {
         // 1. Obtener usuario
         Usuario usuario = usuarioRepository.findById(request.getUsuarioId())
@@ -100,6 +102,7 @@ public class VentaService {
         return mapToDTO(ventaGuardada);
     }
     
+    /** Recupera el historial de compras de un usuario específico */
     public List<VentaResponseDTO> obtenerVentasPorUsuario(Long usuarioId) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
@@ -109,6 +112,7 @@ public class VentaService {
         return ventas.stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
+    /** Convierte la entidad Venta a un objeto VentaResponseDTO */
     private VentaResponseDTO mapToDTO(Venta venta) {
         VentaResponseDTO dto = new VentaResponseDTO();
         dto.setVentaId(venta.getId());

@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import proyectoapi.exception.ResourceNotFoundException;
 
+/** Proporciona servicios para la gestión y consulta de productos */
 @Service
 @Transactional
 public class ProductoService {
@@ -23,6 +24,7 @@ public class ProductoService {
     @Autowired
     private ProductoRepository productoRepository;
 
+    /** Obtiene todos los productos ordenados por título */
     public List<ProductoResponseDTO> obtenerCatalogo() {
         return productoEnVentaRepository.findAllByOrderByProductoTituloAsc()
                 .stream()
@@ -30,16 +32,19 @@ public class ProductoService {
                 .collect(Collectors.toList());
     }
 
+    /** Obtiene la lista de categorías únicas de productos */
     public List<String> obtenerCategorias() {
         return productoRepository.findDistinctCategorias();
     }
 
+    /** Busca los detalles de un producto por su ID */
     public ProductoResponseDTO obtenerDetalle(Long id) {
         ProductoEnVenta productoEnVenta = productoEnVentaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Publicación no encontrada"));
         return mapToDTO(productoEnVenta);
     }
 
+    /** Convierte una entidad ProductoEnVenta a DTO */
     private ProductoResponseDTO mapToDTO(ProductoEnVenta pve) {
         ProductoResponseDTO dto = new ProductoResponseDTO();
         dto.setId(pve.getId());

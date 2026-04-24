@@ -24,6 +24,7 @@ import proyectoapi.model.ProductoEnVenta;
 import proyectoapi.model.Usuario;
 import proyectoapi.service.UsuarioService;
 
+/** Endpoints para gestión de usuarios y acciones de vendedores */
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -31,6 +32,7 @@ public class UserController {
     @Autowired
     private UsuarioService usuarioService;
 
+    /** Obtiene la lista de todos los vendedores registrados */
     @GetMapping("/vendedores")
     public List<Usuario> obtenerVendedores() {
         return usuarioService.getVendedores();
@@ -40,23 +42,27 @@ public class UserController {
     // TODO: agregar endpoint para obtener compradores
     // TODO: agregar endpoint para obtener compradores por id
 
+    /** Permite a un vendedor publicar un nuevo producto */
     @PostMapping("/product/publish")
     public ProductoEnVenta publicar(@RequestBody PublicacionDTO data) {
         return usuarioService.publicarProducto(data.getTitulo(), data.getDescripcion(), data.getCategoria(),
                 data.getUrlImagen(), data.getUsuarioId(), data.getStock(), data.getPrecio());
     }
 
+    /** Elimina un producto publicado por el vendedor */
     @DeleteMapping("/product/{id}")
     public void eliminarProducto(@PathVariable Long id) {
         usuarioService.eliminarProducto(id);
     }
 
+    /** Actualiza parcialmente el precio de un producto publicado */
     @PatchMapping("/product/update")
     public void actualizarPrecioProducto(@RequestBody ActualizarPrecioDTO actualizarPrecioDTO) {
         usuarioService.updatePrecioProducto(actualizarPrecioDTO.getPrecioNuevo(), actualizarPrecioDTO.getUsuarioId(),
                 actualizarPrecioDTO.getId());
     }
 
+    /** Convierte una entidad Usuario a UsuarioResponseDTO */
     private UsuarioResponseDTO mapToDTO(Usuario usuario) {
         UsuarioResponseDTO dto = new UsuarioResponseDTO();
         dto.setId(usuario.getId());

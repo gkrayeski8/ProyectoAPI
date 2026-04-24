@@ -8,6 +8,7 @@ import proyectoapi.service.VentaService;
 
 import java.util.List;
 
+/** Endpoints para procesar compras y consultar historial de ventas */
 @RestController
 @RequestMapping("/api/ventas")
 public class VentaController {
@@ -15,11 +16,13 @@ public class VentaController {
     @Autowired
     private VentaService ventaService;
 
+    /** Procesa el checkout finalizando la compra del carrito */
     @PostMapping("/checkout")
     public VentaResponseDTO realizarCheckout(@RequestBody VentaRequestDTO request) {
         return ventaService.checkout(request);
     }
 
+    /** Lista todas las compras realizadas por un usuario */
     @GetMapping("/usuario/{usuarioId}")
     public List<VentaResponseDTO> obtenerVentasUsuario(@PathVariable Long usuarioId) {
         return ventaService.obtenerVentasPorUsuario(usuarioId);

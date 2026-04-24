@@ -19,6 +19,7 @@ import proyectoapi.exception.ResourceNotFoundException;
 import proyectoapi.exception.BusinessLogicException;
 import proyectoapi.model.Role;
 
+/** Gestiona usuarios, perfiles, login y publicaciones de vendedores */
 @Service
 @Transactional
 public class UsuarioService {
@@ -35,6 +36,7 @@ public class UsuarioService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    /** Crea un nuevo usuario en el sistema */
     public UsuarioResponseDTO createUser(String nombre, String apellido, String email, String password, Role role) {
         Usuario usuario = new Usuario();
         usuario.setNombre(nombre);
@@ -52,6 +54,7 @@ public class UsuarioService {
         return response;
     }
 
+    /** Valida el acceso del usuario y gestiona bloqueos */
     public Usuario iniciarSesion(String email, String password) {
         Integer contador = 0;
         Usuario usuario = usuarioRepository.findByEmail(email);
@@ -77,10 +80,12 @@ public class UsuarioService {
     }
 
 
+    /** Lista todos los usuarios con rol VENDEDOR */
     public List<Usuario> getVendedores(){
         return usuarioRepository.findVendedores();
     }
 
+    /** Permite a un vendedor publicar un nuevo producto */
     public ProductoEnVenta publicarProducto(String titulo, String descripcion, String categoria, String urlImagen, Long id, Integer stock, Double precio){
         Usuario user = usuarioRepository.findById(id).orElse(null);
         if (user == null){
@@ -96,6 +101,7 @@ public class UsuarioService {
         return productoEnVentaRepository.save(nuevoProductoVenta);
     }
 
+    /** Elimina una publicación de producto por su ID */
     public void eliminarProducto(Long id) {
         if (!productoEnVentaRepository.existsById(id)) {
             throw new ResourceNotFoundException("Producto en venta no encontrado con ID: " + id);
@@ -103,6 +109,7 @@ public class UsuarioService {
         productoEnVentaRepository.deleteById(id);
     }
 
+    /** Actualiza el precio de un producto si pertenece al usuario */
     public void updatePrecioProducto(Double precioNuevo, Long idUsuario, Long id){
         ProductoEnVenta producto = productoEnVentaRepository.findById(id).orElse(null);
         Usuario user = usuarioRepository.findById(id).orElse(null);
@@ -117,6 +124,7 @@ public class UsuarioService {
         }
 
     }
+    /** Crea y persiste un objeto Producto base */
     private Producto crearProducto(String titulo, String descripcion, String categoria, String urlImagen){
         Producto producto = new Producto(); 
         producto.setTitulo(titulo);

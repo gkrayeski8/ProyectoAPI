@@ -14,6 +14,7 @@ import proyectoapi.dto.UsuarioResponseDTO;
 import proyectoapi.security.JwtUtils;
 import proyectoapi.security.UserDetailsImpl;
 
+/** Servicio para gestionar la autenticación y registro de usuarios */
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -22,6 +23,7 @@ public class AuthService {
     private final JwtUtils jwtUtils;
     private final UsuarioService usuarioService;
 
+    /** Valida credenciales y devuelve un token JWT */
     public JwtResponseDTO autenticarUsuario(LoginDTO peticionLogin) {
         Authentication autenticacion = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(peticionLogin.getEmail(), peticionLogin.getPassword()));
@@ -38,6 +40,7 @@ public class AuthService {
                 detallesUsuario.getUsuario().getRole());
     }
 
+    /** Registra un nuevo usuario y devuelve su token */
     public JwtResponseDTO registrarUsuario(UsuarioRequestDTO peticion) {
         UsuarioResponseDTO nuevoUsuario = usuarioService.createUser(
                 peticion.getNombre(),

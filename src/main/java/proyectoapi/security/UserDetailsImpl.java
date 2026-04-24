@@ -10,11 +10,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import lombok.AllArgsConstructor;
 import proyectoapi.model.Usuario;
 
+/** Adaptador para usar la entidad Usuario con Spring Security */
 @AllArgsConstructor
 public class UserDetailsImpl implements UserDetails {
 
     private final Usuario usuario;
 
+    /** Mapea el rol del usuario a una autoridad de Spring Security */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + usuario.getRole().name()));
@@ -35,6 +37,7 @@ public class UserDetailsImpl implements UserDetails {
         return true;
     }
 
+    /** Indica si la cuenta del usuario no está bloqueada */
     @Override
     public boolean isAccountNonLocked() {
         return !usuario.isBloqueado();

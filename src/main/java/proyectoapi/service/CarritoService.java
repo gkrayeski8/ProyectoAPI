@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import proyectoapi.exception.BusinessLogicException;
 import proyectoapi.exception.ResourceNotFoundException;
 
+/** Gestiona el carrito de compras de los usuarios */
 @Service
 @Transactional
 public class CarritoService {
@@ -33,10 +34,12 @@ public class CarritoService {
     @Autowired
     private ProductoEnVentaRepository productoEnVentaRepository;
 
+    /** Obtiene el carrito de un usuario como DTO */
     public CarritoResponseDTO getCartByUser(Long usuarioId) {
         return mapToDTO(getCartEntityByUser(usuarioId));
     }
 
+    /** Busca o crea la entidad Carrito de un usuario */
     private Carrito getCartEntityByUser(Long usuarioId) {
         // Busca usuarios por el id que aparece en el repositorio del carrito
         return carritoRepository.findByUsuarioId(usuarioId)
@@ -53,6 +56,7 @@ public class CarritoService {
                 });
     }
 
+    /** Agrega un producto al carrito validando stock */
     public CarritoResponseDTO addProductCart(Long productoId, Long usuarioId, int cantidad) {
         // primero busca el carrito del usuario llamando la funcion de arriba
         Carrito carrito = getCartEntityByUser(usuarioId);
@@ -87,6 +91,7 @@ public class CarritoService {
         return mapToDTO(carritoGuardado);
     }
 
+    /** Actualiza la cantidad de un producto en el carrito */
     public CarritoResponseDTO updateProductQuantity(Long productoId, Long usuarioId, int nuevaCantidad) {
         Carrito carrito = getCartEntityByUser(usuarioId);
 
@@ -117,6 +122,7 @@ public class CarritoService {
         return mapToDTO(carritoRepository.save(carrito));
     }
 
+    /** Elimina un producto específico del carrito */
     public CarritoResponseDTO removeProductFromCart(Long productoId, Long usuarioId) {
         Carrito carrito = getCartEntityByUser(usuarioId);
 
@@ -126,6 +132,7 @@ public class CarritoService {
         return mapToDTO(carritoRepository.save(carrito));
     }
 
+    /** Vacía todos los productos del carrito del usuario */
     public CarritoResponseDTO emptyCart(Long usuarioId) {
         Carrito carrito = getCartEntityByUser(usuarioId);
 
@@ -134,6 +141,7 @@ public class CarritoService {
         return mapToDTO(carritoRepository.save(carrito));
     }
 
+    /** Convierte un ItemCarrito a su versión DTO */
     private ItemCarritoResponseDTO mapItemToDTO(ItemCarrito item) {
         ItemCarritoResponseDTO dto = new ItemCarritoResponseDTO();
         dto.setId(item.getId());
@@ -151,6 +159,7 @@ public class CarritoService {
         return dto;
     }
 
+    /** Convierte la entidad Carrito a CarritoResponseDTO */
     private CarritoResponseDTO mapToDTO(Carrito carrito) {
         CarritoResponseDTO dto = new CarritoResponseDTO();
         dto.setId(carrito.getId());

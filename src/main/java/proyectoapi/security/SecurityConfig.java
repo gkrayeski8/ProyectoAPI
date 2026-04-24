@@ -16,6 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import lombok.RequiredArgsConstructor;
 
+/** Configuración global de seguridad, filtros y permisos de rutas */
 @Configuration
 @EnableMethodSecurity
 @RequiredArgsConstructor
@@ -25,6 +26,7 @@ public class SecurityConfig {
     private final JwtAuthEntryPoint manejadorNoAutorizado;
     private final JwtFilter jwtFilter;
 
+    /** Define el proveedor de autenticación con UserDetails y PasswordEncoder */
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider proveedorAuth = new DaoAuthenticationProvider(userDetailsService);
@@ -32,16 +34,25 @@ public class SecurityConfig {
         return proveedorAuth;
     }
 
+    /** Expone el AuthenticationManager para ser usado en otros servicios */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configAuth) throws Exception {
         return configAuth.getAuthenticationManager();
     }
 
+    /** Obtiene el UserDetailsServiceImpl para ser usado en otros servicios */
+    @Bean
+    public UserDetailsServiceImpl userDetailsService() {
+        return userDetailsService;
+    }
+
+    /** Configura el algoritmo BCrypt para encriptar contraseñas */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /** Define la cadena de filtros y reglas de autorización HTTP */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
