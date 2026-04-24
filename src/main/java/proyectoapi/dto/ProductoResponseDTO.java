@@ -9,4 +9,7 @@ public class ProductoResponseDTO {
     private String descripcion;
     private String categoria;
     private String urlImagen;
+    private Double precio;
+    private Integer stock;
+    private String vendedor;
 }

@@ -14,12 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import proyectoapi.dto.ActualizarPrecioDTO;
-//import proyectoapi.dto.LoginDTO;
-//import proyectoapi.dto.ProductoResponseDTO;
+import proyectoapi.dto.ProductoResponseDTO;
 import proyectoapi.dto.PublicacionDTO;
-//import proyectoapi.dto.UsuarioRequestDTO;
-//import proyectoapi.dto.UsuarioResponseDTO;
-//import proyectoapi.model.Producto;
+import proyectoapi.dto.UsuarioResponseDTO;
 import proyectoapi.model.ProductoEnVenta;
 import proyectoapi.model.Usuario;
 import proyectoapi.service.UsuarioService;
@@ -34,8 +31,10 @@ public class UserController {
 
     /** Obtiene la lista de todos los vendedores registrados */
     @GetMapping("/vendedores")
-    public List<Usuario> obtenerVendedores() {
-        return usuarioService.getVendedores();
+    public List<UsuarioResponseDTO> obtenerVendedores() {
+        return usuarioService.getVendedores().stream()
+                .map(this::mapToDTO)
+                .collect(java.util.stream.Collectors.toList());
     }
 
     // TODO: Agregar endpoint para obtener vendedor por id
@@ -44,7 +43,7 @@ public class UserController {
 
     /** Permite a un vendedor publicar un nuevo producto */
     @PostMapping("/product/publish")
-    public ProductoEnVenta publicar(@RequestBody PublicacionDTO data) {
+    public ProductoResponseDTO publicar(@RequestBody PublicacionDTO data) {
         usuarioService.validarPropietario(data.getUsuarioId());
         return usuarioService.publicarProducto(data.getTitulo(), data.getDescripcion(), data.getCategoria(),
                 data.getUrlImagen(), data.getUsuarioId(), data.getStock(), data.getPrecio());
@@ -65,14 +64,12 @@ public class UserController {
     }
 
     /** Convierte una entidad Usuario a UsuarioResponseDTO */
-    /**
-     * private UsuarioResponseDTO mapToDTO(Usuario usuario) {
-     * UsuarioResponseDTO dto = new UsuarioResponseDTO();
-     * dto.setId(usuario.getId());
-     * dto.setNombre(usuario.getNombre());
-     * dto.setApellido(usuario.getApellido());
-     * dto.setEmail(usuario.getEmail());
-     * return dto;
-     * }
-     */
+    private UsuarioResponseDTO mapToDTO(Usuario usuario) {
+        UsuarioResponseDTO dto = new UsuarioResponseDTO();
+        dto.setId(usuario.getId());
+        dto.setNombre(usuario.getNombre());
+        dto.setApellido(usuario.getApellido());
+        dto.setEmail(usuario.getEmail());
+        return dto;
+    }
 }

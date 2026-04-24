@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import proyectoapi.dto.ProductoResponseDTO;
 import proyectoapi.dto.UsuarioResponseDTO;
 import proyectoapi.model.Producto;
 import proyectoapi.model.ProductoEnVenta;
@@ -86,7 +87,7 @@ public class UsuarioService {
     }
 
     /** Permite a un vendedor publicar un nuevo producto */
-    public ProductoEnVenta publicarProducto(String titulo, String descripcion, String categoria, String urlImagen,
+    public ProductoResponseDTO publicarProducto(String titulo, String descripcion, String categoria, String urlImagen,
             Long id, Integer stock, Double precio) {
         Usuario user = usuarioRepository.findById(id).orElse(null);
         if (user == null) {
@@ -99,7 +100,19 @@ public class UsuarioService {
         nuevoProductoVenta.setStock(stock);
         nuevoProductoVenta.setPrecio(precio);
         user.getProductosEnVenta().add(nuevoProductoVenta);
-        return productoEnVentaRepository.save(nuevoProductoVenta);
+        ProductoEnVenta saved = productoEnVentaRepository.save(nuevoProductoVenta);
+        
+        ProductoResponseDTO response = new ProductoResponseDTO();
+        response.setId(saved.getId());
+        response.setTitulo(saved.getProducto().getTitulo());
+        response.setDescripcion(saved.getProducto().getDescripcion());
+        response.setCategoria(saved.getProducto().getCategoria());
+        response.setUrlImagen(saved.getProducto().getUrlImagen());
+        response.setPrecio(saved.getPrecio());
+        response.setStock(saved.getStock());
+        response.setVendedor(user.getNombre() + " " + user.getApellido());
+        
+        return response;
     }
 
     /** Realiza un borrado lógico de una publicación de producto por su ID */

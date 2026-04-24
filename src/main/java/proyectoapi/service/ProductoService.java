@@ -55,6 +55,9 @@ public class ProductoService {
         dto.setDescripcion(pve.getProducto().getDescripcion());
         dto.setCategoria(pve.getProducto().getCategoria());
         dto.setUrlImagen(pve.getProducto().getUrlImagen());
+        dto.setPrecio(pve.getPrecio());
+        dto.setStock(pve.getStock());
+        dto.setVendedor(pve.getUsuario().getNombre() + " " + pve.getUsuario().getApellido());
         return dto;
     }
 }
