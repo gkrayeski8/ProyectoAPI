@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import proyectoapi.dto.ProductoResponseDTO;
+import proyectoapi.dto.UsuarioRequestDTO;
 import proyectoapi.dto.UsuarioResponseDTO;
 import proyectoapi.model.Producto;
 import proyectoapi.model.ProductoEnVenta;
@@ -101,7 +102,7 @@ public class UsuarioService {
         nuevoProductoVenta.setPrecio(precio);
         user.getProductosEnVenta().add(nuevoProductoVenta);
         ProductoEnVenta saved = productoEnVentaRepository.save(nuevoProductoVenta);
-        
+
         ProductoResponseDTO response = new ProductoResponseDTO();
         response.setId(saved.getId());
         response.setTitulo(saved.getProducto().getTitulo());
@@ -111,7 +112,7 @@ public class UsuarioService {
         response.setPrecio(saved.getPrecio());
         response.setStock(saved.getStock());
         response.setVendedor(user.getNombre() + " " + user.getApellido());
-        
+
         return response;
     }
 
@@ -146,5 +147,54 @@ public class UsuarioService {
         producto.setDescripcion(descripcion);
         producto.setUrlImagen(urlImagen);
         return productoRepository.save(producto);
+    }
+
+    /** Actualiza el perfil del usuario autenticado */
+    public UsuarioResponseDTO updateProfile(UsuarioRequestDTO usuario) {
+        Usuario authUser = getUsuarioAutenticado();
+        if (authUser == null) {
+            throw new AccessDeniedException("No tienes permisos para acceder al perfil");
+        }
+
+        if (usuario.getNombre() != null && !usuario.getNombre().isEmpty()) {
+            authUser.setNombre(usuario.getNombre());
+        }
+        if (usuario.getApellido() != null && !usuario.getApellido().isEmpty()) {
+            authUser.setApellido(usuario.getApellido());
+        }
+        if (usuario.getEmail() != null && !usuario.getEmail().isEmpty()) {
+            // Validar que el nuevo email no esté en uso por otro usuario
+            Usuario existente = usuarioRepository.findByEmail(usuario.getEmail());
+            if (existente != null && !existente.getId().equals(authUser.getId())) {
+                throw new BusinessLogicException("El email ya está en uso por otro usuario");
+            }
+            authUser.setEmail(usuario.getEmail());
+        }
+        if (usuario.getPassword() != null && !usuario.getPassword().isEmpty()) {
+            authUser.setPassword(passwordEncoder.encode(usuario.getPassword()));
+        }
+
+        Usuario saved = usuarioRepository.save(authUser);
+
+        UsuarioResponseDTO response = new UsuarioResponseDTO();
+        response.setId(saved.getId());
+        response.setNombre(saved.getNombre());
+        response.setApellido(saved.getApellido());
+        response.setEmail(saved.getEmail());
+        return response;
+    }
+
+    /** Obtiene el perfil del usuario autenticado */
+    public UsuarioResponseDTO getMyProfile() {
+        Usuario authUser = getUsuarioAutenticado();
+        if (authUser == null) {
+            throw new AccessDeniedException("No tienes permisos para acceder al perfil");
+        }
+        UsuarioResponseDTO response = new UsuarioResponseDTO();
+        response.setId(authUser.getId());
+        response.setNombre(authUser.getNombre());
+        response.setApellido(authUser.getApellido());
+        response.setEmail(authUser.getEmail());
+        return response;
     }
 }

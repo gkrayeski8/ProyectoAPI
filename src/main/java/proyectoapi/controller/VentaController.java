@@ -9,6 +9,8 @@ import proyectoapi.dto.VentaResponseDTO;
 import proyectoapi.service.VentaService;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+//import org.springframework.web.bind.annotation.RequestParam;
 
 /** Endpoints para procesar compras y consultar historial de ventas */
 @RestController
@@ -35,4 +37,18 @@ public class VentaController {
     public List<VentaResponseDTO> obtenerMisCompras() {
         return ventaService.obtenerVentasPorUsuario(getEmailAutenticado());
     }
+
+    /**
+     * Lista todas las ventas realizadas por el usuario autenticado (como vendedor)
+     */
+    @GetMapping("/mis-ventas")
+    public List<VentaResponseDTO> obtenerMisVentas() {
+        return ventaService.obtenerVentasDeMisProductos(getEmailAutenticado());
+    }
+
+    @GetMapping("/{id}")
+    public VentaResponseDTO obtenerVentaPorId(@PathVariable Long id) {
+        return ventaService.obtenerVentaPorId(id);
+    }
+
 }

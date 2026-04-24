@@ -63,16 +63,22 @@ public class VentaService {
         venta.setFechaVenta(LocalDateTime.now());
         venta.setDireccionEnvio(request.getDireccionEnvio());
         venta.setMetodoPago(request.getMetodoPago());
-        
+
         double total = 0.0;
         List<CompraProducto> compras = new ArrayList<>();
 
         // 4. Validar stock y generar detalles
         for (ItemCarrito item : carrito.getItems()) {
             ProductoEnVenta productoVenta = item.getProducto();
-            
+
+            if (!productoVenta.isActivo()) {
+                throw new BusinessLogicException(
+                        "El producto '" + productoVenta.getProducto().getTitulo() + "' ya no está disponible para la venta.");
+            }
+
             if (productoVenta.getStock() < item.getCantidad()) {
-                throw new BusinessLogicException("No hay stock suficiente para el producto: " + productoVenta.getProducto().getTitulo());
+                throw new BusinessLogicException(
+                        "No hay stock suficiente para el producto: " + productoVenta.getProducto().getTitulo());
             }
 
             // Descontar stock
@@ -87,7 +93,7 @@ public class VentaService {
             compra.setFechaCompra(LocalDateTime.now());
             compra.setPrecioUnitario(productoVenta.getPrecio().doubleValue());
             compra.setVenta(venta);
-            
+
             compras.add(compra);
             total += (compra.getPrecioUnitario() * compra.getCantidad());
         }
@@ -105,7 +111,7 @@ public class VentaService {
         // 7. Mapear respuesta
         return mapToDTO(ventaGuardada);
     }
-    
+
     /** Recupera el historial de compras del usuario autenticado */
     public List<VentaResponseDTO> obtenerVentasPorUsuario(String email) {
         Usuario usuario = usuarioRepository.findByEmail(email);
@@ -114,6 +120,46 @@ public class VentaService {
         }
         List<Venta> ventas = ventaRepository.findByUsuarioOrderByFechaVentaDesc(usuario);
         return ventas.stream().map(this::mapToDTO).collect(Collectors.toList());
+    }
+
+    /** Recupera el historial de ventas (productos vendidos) por el vendedor autenticado */
+    public List<VentaResponseDTO> obtenerVentasDeMisProductos(String email) {
+        Usuario vendedor = usuarioRepository.findByEmail(email);
+        if (vendedor == null) {
+            throw new ResourceNotFoundException("Usuario no encontrado");
+        }
+        
+        List<Venta> ventas = ventaRepository.findVentasByVendedor(vendedor);
+        
+        return ventas.stream().map(venta -> {
+            VentaResponseDTO dto = new VentaResponseDTO();
+            dto.setVentaId(venta.getId());
+            dto.setUsuarioId(venta.getUsuario().getId()); // El comprador
+            dto.setFechaVenta(venta.getFechaVenta());
+            dto.setDireccionEnvio(venta.getDireccionEnvio());
+            dto.setMetodoPago(venta.getMetodoPago());
+            
+            // Solo incluir los productos de este vendedor en el ticket
+            List<CompraProductoResponseDTO> itemsDTO = venta.getItems().stream()
+                .filter(compra -> compra.getProducto().getUsuario().getId().equals(vendedor.getId()))
+                .map(compra -> {
+                    CompraProductoResponseDTO item = new CompraProductoResponseDTO();
+                    item.setProductoId(compra.getProducto().getId());
+                    item.setTituloProducto(compra.getProducto().getProducto().getTitulo());
+                    item.setCantidad(compra.getCantidad());
+                    item.setPrecioUnitario(compra.getPrecioUnitario());
+                    return item;
+                }).collect(Collectors.toList());
+            
+            dto.setItems(itemsDTO);
+            
+            // Recalcular el total solo con la suma de los productos de este vendedor
+            double totalVendedor = itemsDTO.stream().mapToDouble(i -> i.getPrecioUnitario() * i.getCantidad()).sum();
+            dto.setTotalPagado(totalVendedor);
+            dto.setMensaje("Detalle de mis productos vendidos");
+            
+            return dto;
+        }).collect(Collectors.toList());
     }
 
     /** Convierte la entidad Venta a un objeto VentaResponseDTO */
@@ -126,7 +172,7 @@ public class VentaService {
         dto.setMensaje("Compra realizada con éxito");
         dto.setDireccionEnvio(venta.getDireccionEnvio());
         dto.setMetodoPago(venta.getMetodoPago());
-        
+
         List<CompraProductoResponseDTO> itemsDTO = venta.getItems().stream().map(compra -> {
             CompraProductoResponseDTO item = new CompraProductoResponseDTO();
             item.setProductoId(compra.getProducto().getId());
@@ -135,8 +181,14 @@ public class VentaService {
             item.setPrecioUnitario(compra.getPrecioUnitario());
             return item;
         }).collect(Collectors.toList());
-        
+
         dto.setItems(itemsDTO);
         return dto;
+    }
+
+    public VentaResponseDTO obtenerVentaPorId(Long id) {
+        Venta venta = ventaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Venta no encontrada"));
+        return mapToDTO(venta);
     }
 }

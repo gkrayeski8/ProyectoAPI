@@ -16,9 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 import proyectoapi.dto.ActualizarPrecioDTO;
 import proyectoapi.dto.ProductoResponseDTO;
 import proyectoapi.dto.PublicacionDTO;
+import proyectoapi.dto.UsuarioRequestDTO;
 import proyectoapi.dto.UsuarioResponseDTO;
 import proyectoapi.model.Usuario;
 import proyectoapi.service.UsuarioService;
+import org.springframework.web.bind.annotation.PutMapping;
+//import org.springframework.web.bind.annotation.RequestParam;
 
 /** Endpoints para gestión de usuarios y acciones de vendedores */
 @RestController
@@ -59,6 +62,16 @@ public class UserController {
     public void actualizarPrecioProducto(@RequestBody ActualizarPrecioDTO actualizarPrecioDTO) {
         // La validacion de propietario se hace internamente en el servicio
         usuarioService.updatePrecioProducto(actualizarPrecioDTO.getPrecioNuevo(), actualizarPrecioDTO.getId());
+    }
+
+    @PutMapping("/me")
+    public UsuarioResponseDTO updateProfile(@RequestBody UsuarioRequestDTO usuario) {
+        return usuarioService.updateProfile(usuario);
+    }
+
+    @GetMapping("/me")
+    public UsuarioResponseDTO getMyProfile() {
+        return usuarioService.getMyProfile();
     }
 
     /** Convierte una entidad Usuario a UsuarioResponseDTO */
