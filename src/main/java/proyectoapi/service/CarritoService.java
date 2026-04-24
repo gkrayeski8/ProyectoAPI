@@ -46,7 +46,6 @@ public class CarritoService {
                 .orElseGet(() -> {
                     // si no lo encuentra en el repo de carrito, va a buscar en el repo de usuarios
                     Usuario usuario = usuarioRepository.findById(usuarioId)
-                            // TODO: crear una excepcion para usuario no encontrado
                             .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
                     // si encuentra el usuario, crea un nuevo carrito y se lo asigna y lo guarda en
                     // relacion al usuario
@@ -63,12 +62,10 @@ public class CarritoService {
 
         // busca el producto en venta
         ProductoEnVenta productoVenta = productoEnVentaRepository.findById(productoId)
-                // TODO: crear una excepcion para producto en venta no encontrado
                 .orElseThrow(() -> new ResourceNotFoundException("Producto en venta no encontrado"));
 
         // crea una validacion de stock
         if (productoVenta.getStock() < cantidad) {
-            // TODO: crear una excepcion para stock insuficiente
             throw new BusinessLogicException("No hay stock suficiente para este producto");
         }
 
@@ -109,13 +106,11 @@ public class CarritoService {
             } else {
                 ProductoEnVenta productoVenta = itemExistente.get().getProducto();
                 if (productoVenta.getStock() < nuevaCantidad) {
-                    // TODO: usar excepcion de stock insuficiente
                     throw new BusinessLogicException("No hay stock suficiente para este producto");
                 }
                 itemExistente.get().setCantidad(nuevaCantidad);
             }
         } else {
-            // TODO: usar excepcion de producto no encontrado
             throw new BusinessLogicException("El producto no está en el carrito");
         }
 

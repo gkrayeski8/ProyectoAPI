@@ -18,7 +18,7 @@ import proyectoapi.dto.ActualizarPrecioDTO;
 //import proyectoapi.dto.ProductoResponseDTO;
 import proyectoapi.dto.PublicacionDTO;
 //import proyectoapi.dto.UsuarioRequestDTO;
-import proyectoapi.dto.UsuarioResponseDTO;
+//import proyectoapi.dto.UsuarioResponseDTO;
 //import proyectoapi.model.Producto;
 import proyectoapi.model.ProductoEnVenta;
 import proyectoapi.model.Usuario;
@@ -65,12 +65,14 @@ public class UserController {
     }
 
     /** Convierte una entidad Usuario a UsuarioResponseDTO */
-    private UsuarioResponseDTO mapToDTO(Usuario usuario) {
-        UsuarioResponseDTO dto = new UsuarioResponseDTO();
-        dto.setId(usuario.getId());
-        dto.setNombre(usuario.getNombre());
-        dto.setApellido(usuario.getApellido());
-        dto.setEmail(usuario.getEmail());
-        return dto;
-    }
+    /**
+     * private UsuarioResponseDTO mapToDTO(Usuario usuario) {
+     * UsuarioResponseDTO dto = new UsuarioResponseDTO();
+     * dto.setId(usuario.getId());
+     * dto.setNombre(usuario.getNombre());
+     * dto.setApellido(usuario.getApellido());
+     * dto.setEmail(usuario.getEmail());
+     * return dto;
+     * }
+     */
 }
