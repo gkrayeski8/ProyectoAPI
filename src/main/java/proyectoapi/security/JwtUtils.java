@@ -13,11 +13,11 @@ import java.util.Date;
 @Component
 public class JwtUtils {
 
-    @Value("${jwt.secret:defaultSecretKeyWithAtLeast32CharactersForHmacSha256}")
+    @Value("${jwt.secret}")
     private String secretoJwt;
 
-    @Value("${jwt.expiration:86400000}")
-    private int expiracionJwtMs; // 1 dia
+    @Value("${jwt.expiration}")
+    private int expiracionJwtMs;
 
     private Key clave;
 
