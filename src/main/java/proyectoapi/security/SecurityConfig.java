@@ -40,12 +40,6 @@ public class SecurityConfig {
         return configAuth.getAuthenticationManager();
     }
 
-    /** Obtiene el UserDetailsServiceImpl para ser usado en otros servicios */
-    @Bean
-    public UserDetailsServiceImpl userDetailsService() {
-        return userDetailsService;
-    }
-
     /** Configura el algoritmo BCrypt para encriptar contraseñas */
     @Bean
     public PasswordEncoder passwordEncoder() {
