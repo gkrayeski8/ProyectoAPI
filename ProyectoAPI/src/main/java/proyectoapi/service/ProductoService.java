@@ -1,0 +1,63 @@
+package proyectoapi.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import proyectoapi.dto.ProductoResponseDTO;
+import proyectoapi.model.ProductoEnVenta;
+import proyectoapi.repository.ProductoEnVentaRepository;
+import proyectoapi.repository.ProductoRepository;
+import jakarta.transaction.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import proyectoapi.exception.ResourceNotFoundException;
+
+/** Proporciona servicios para la gestión y consulta de productos */
+@Service
+@Transactional
+public class ProductoService {
+
+    @Autowired
+    private ProductoEnVentaRepository productoEnVentaRepository;
+
+    @Autowired
+    private ProductoRepository productoRepository;
+
+    /** Obtiene todos los productos ordenados por título */
+    public List<ProductoResponseDTO> obtenerCatalogo() {
+        return productoEnVentaRepository.findByActivoTrueOrderByProductoTituloAsc()
+                .stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    /** Obtiene la lista de categorías únicas de productos */
+    public List<String> obtenerCategorias() {
+        return productoRepository.findDistinctCategorias();
+    }
+
+    /** Busca los detalles de un producto por su ID */
+    public ProductoResponseDTO obtenerDetalle(Long id) {
+        ProductoEnVenta productoEnVenta = productoEnVentaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Publicación no encontrada"));
+        if (!productoEnVenta.isActivo()) {
+            throw new ResourceNotFoundException("Publicación no encontrada");
+        }
+        return mapToDTO(productoEnVenta);
+    }
+
+    /** Convierte una entidad ProductoEnVenta a DTO */
+    private ProductoResponseDTO mapToDTO(ProductoEnVenta pve) {
+        ProductoResponseDTO dto = new ProductoResponseDTO();
+        dto.setId(pve.getId());
+        dto.setTitulo(pve.getProducto().getTitulo());
+        dto.setDescripcion(pve.getProducto().getDescripcion());
+        dto.setCategoria(pve.getProducto().getCategoria());
+        dto.setUrlImagen(pve.getProducto().getUrlImagen());
+        dto.setPrecio(pve.getPrecio());
+        dto.setStock(pve.getStock());
+        dto.setVendedor(pve.getUsuario().getNombre() + " " + pve.getUsuario().getApellido());
+        return dto;
+    }
+}

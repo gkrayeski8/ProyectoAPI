@@ -1,0 +1,42 @@
+services:
+
+  # ── Base de datos MySQL ──────────────────────────────────────────────────────
+  db:
+    image: mysql:8.0
+    container_name: ecommerce_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: ecommerce_db3
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Aplicación Spring Boot ───────────────────────────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ecommerce_app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Solo se sobreescribe la URL para cambiar "localhost" por "db" (nombre del servicio Docker)
+      # El resto de configuración viene del application.properties original
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/ecommerce_db3?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+
+volumes:
+  db_data:

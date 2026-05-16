@@ -1,0 +1,12 @@
+package proyectoapi.dto;
+
+import lombok.Data;
+
+@Data
+public class UsuarioResponseDTO {
+    private Long id;
+    private String nombre;
+    private String apellido;
+    private String email;
+    // IMPORTANTE: No incluir el password aquí
+}

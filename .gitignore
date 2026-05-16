@@ -1,0 +1,9 @@
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+ProyectoAPI/target/
+ProyectoAPI/.mvn/
+ProyectoAPI/*.jar
+.vscode/
+.idea/
+*.swp
