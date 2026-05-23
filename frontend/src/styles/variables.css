@@ -1,38 +1,48 @@
 :root {
   /* Colors */
-  --primary: #6366f1;
-  --primary-hover: #4f46e5;
-  --secondary: #ec4899;
-  --accent: #8b5cf6;
+  --primary: #ffffff;
+  --primary-hover: #e0e0e0;
+  --secondary: #999999;
+  --accent: #eeeeee;
   
   /* Backgrounds */
-  --bg-main: #0f172a;
-  --bg-card: rgba(30, 41, 59, 0.7);
-  --bg-glass: rgba(255, 255, 255, 0.05);
+  --bg-main: #050505;
+  --bg-card: #0a0a0a;
+  --bg-header: rgba(5, 5, 5, 0.95);
   
   /* Text */
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0a0;
+  --text-muted: #666666;
   
   /* Borders */
-  --border-glass: rgba(255, 255, 255, 0.1);
-  --border-radius-lg: 1rem;
-  --border-radius-md: 0.5rem;
+  --border-color: #1a1a1a;
+  --border-radius-lg: 0px;
+  --border-radius-md: 0px;
   
   /* Shadows */
-  --shadow-premium: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+  --shadow-premium: none;
+  --shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.8);
   
   /* Fonts */
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-display: 'Outfit', system-ui, sans-serif;
 }
 
 [data-theme='light'] {
-  --bg-main: #f8fafc;
-  --bg-card: rgba(255, 255, 255, 0.8);
-  --bg-glass: rgba(0, 0, 0, 0.02);
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #64748b;
-  --border-glass: rgba(0, 0, 0, 0.05);
+  --primary: #000000;
+  --primary-hover: #333333;
+  --secondary: #666666;
+  --accent: #111111;
+  
+  --bg-main: #ffffff;
+  --bg-card: #fafafa;
+  --bg-header: rgba(255, 255, 255, 0.95);
+  
+  --text-primary: #000000;
+  --text-secondary: #555555;
+  --text-muted: #888888;
+  
+  --border-color: #eaeaea;
+  --shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.05);
 }

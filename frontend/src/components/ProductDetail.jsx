@@ -3,7 +3,6 @@ import { useParams, Link } from 'react-router-dom';
 import './ProductDetail.css';
 
 export default function ProductDetail() {
-  // useParams captura el ':id' de la URL automáticamente
   const { id } = useParams();
   const [producto, setProducto] = useState(null);
   const [cargando, setCargando] = useState(true);
@@ -24,40 +23,61 @@ export default function ProductDetail() {
         console.error("Error al traer el detalle:", error);
         setCargando(false);
       });
-  }, [id]); // Si el ID cambia por alguna razón, se vuelve a disparar el efecto
+  }, [id]);
 
   if (cargando) {
-    return <div className="container"><h3>Cargando producto...</h3></div>;
+    return <div className="loading-container"><h3>Loading product details...</h3></div>;
   }
 
   if (!producto) {
     return (
-      <div className="container">
-        <h3>El producto no existe o hubo un error.</h3>
-        <Link to="/" className="nav-btn">Volver al catálogo</Link>
+      <div className="error-container">
+        <h3>Product not found or an error occurred.</h3>
+        <Link to="/products" className="btn btn-outline">Back to Shop</Link>
       </div>
     );
   }
 
+  const img = producto.urlImagen || producto.imagen || '';
+  const title = producto.titulo || producto.nombre || 'Untitled Product';
+  const price = producto.precio || 0;
+  const description = producto.descripcion || 'No description available.';
+  const category = producto.categoria || 'General';
+  const stock = producto.stock ?? 0;
+
   return (
-    <div className="container detail-container glass">
-      <Link to="/products" className="back-link">← Volver al catálogo</Link>
-      
-      <div className="detail-content">
-        <div className="detail-image">
-          {/* Si no tenés imágenes en la DB, podés usar un placeholder */}
-          <img src={producto.urlImagen || 'https://via.placeholder.com/400'} alt={producto.titulo || producto.nombre || 'Producto'} />
+    <div className="detail-page">
+      <div className="detail-split">
+        <div className="detail-image-side">
+          {img ? (
+            <img src={img} alt={title} />
+          ) : (
+            <div className="no-image-placeholder">No Image Available</div>
+          )}
         </div>
         
-        <div className="detail-info">
-          <h1>{producto.titulo || producto.nombre}</h1>
-          <p className="category">Categoría: {producto.categoria || 'General'}</p>
-          <p className="description">{producto.descripcion || 'Sin descripción disponible.'}</p>
-          <p className="price">${producto.precio}</p>
-          <p className="stock">Stock disponible: {producto.stock} unidades</p>
+        <div className="detail-info-side">
+          <Link to="/products" className="back-link">&larr; Back to Shop</Link>
+          
+          <div className="category-tag">{category}</div>
+          <h1 className="detail-title">{title}</h1>
+          <p className="detail-price">${Number(price).toLocaleString('es-AR')}</p>
+          
+          <div className="detail-meta">
+            <div className="meta-item">
+              <span className="meta-label">Availability</span>
+              <span className="meta-value">{stock > 0 ? `${stock} in stock` : 'Out of stock'}</span>
+            </div>
+            <div className="meta-item">
+              <span className="meta-label">Shipping</span>
+              <span className="meta-value">Free standard</span>
+            </div>
+          </div>
+
+          <p className="detail-description">{description}</p>
           
           <button className="add-to-cart-btn">
-            Agregar al Carrito
+            Add to Cart
           </button>
         </div>
       </div>

@@ -15,13 +15,22 @@ const ProductCard = ({ producto }) => {
 
     return (
         <div className="product-card">
-            {img && <img src={img} alt={name} className="product-image" />}
-            <h3 className="product-name">{name}</h3>
-            <p className="product-price">
-                ${Number(price).toLocaleString('es-AR')}
-            </p>
-            <p className="product-description">{description}</p>
-            <span className="view-detail">Ver detalle →</span>
+            <div className="image-container">
+                {img ? (
+                    <img src={img} alt={name} className="product-image" />
+                ) : (
+                    <div className="product-image" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
+                        No Image
+                    </div>
+                )}
+            </div>
+            <div className="product-info">
+                <h3 className="product-name">{name}</h3>
+                <p className="product-price">
+                    ${Number(price).toLocaleString('es-AR')}
+                </p>
+                <span className="view-detail">View Details &rarr;</span>
+            </div>
         </div>
     );
 };

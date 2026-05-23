@@ -1,14 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ProductList from './components/ProductList';
 import ProductDetail from './components/ProductDetail';
 import Login from './components/Login';
 import Registro from './components/Registro';
 import AdminPanel from './components/AdminPanel';
-import { Link, Routes, Route } from 'react-router-dom';
+import { Link, Routes, Route, useLocation } from 'react-router-dom';
 import './App.css';
 
 function App() {
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    // Scroll to top on route change
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
@@ -17,36 +23,38 @@ function App() {
 
   return (
     <div className="app-container">
-      <nav className="navbar glass">
+      <nav className="navbar">
         <div className="container nav-content">
-          <div className="logo">TPO<span>Frontend</span></div>
+          <Link to="/" className="logo">
+            TPO<span>Market</span>
+          </Link>
           <div className="nav-links">
             <Link to="/products" className="nav-item">
-              Productos
+              Shop
             </Link>
             <Link to="/login" className="nav-btn">
-              Ingresar
+              Login
             </Link>
-            <button onClick={toggleTheme} className="theme-toggle">
+            <button onClick={toggleTheme} className="theme-toggle" aria-label="Toggle theme">
               {isDarkMode ? '🌙' : '☀️'}
             </button>
           </div>
         </div>
       </nav>
 
-      <main style={{ marginTop: '100px' }}>
+      <main style={{ marginTop: '80px', flex: 1, display: 'flex', flexDirection: 'column' }}>
         <Routes>
-            {/* Definimos qué componente se renderiza en cada URL */}
-            <Route path="/products" element={<ProductList />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/registro" element={<Registro />} />
-            <Route path="/products/:id" element={<ProductDetail/>} />
-          </Routes>
+          <Route path="/" element={<ProductList />} />
+          <Route path="/products" element={<ProductList />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/registro" element={<Registro />} />
+          <Route path="/products/:id" element={<ProductDetail/>} />
+        </Routes>
       </main>
 
-      <footer className="footer glass">
+      <footer className="footer">
         <div className="container">
-          <p>&copy; 2026 TPO. Todos los derechos reservados.</p>
+          <p>&copy; 2026 TPO Market. The premier marketplace community.</p>
         </div>
       </footer>
     </div>

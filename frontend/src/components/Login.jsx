@@ -19,60 +19,67 @@ export default function Login() {
   };
 
   return (
-    <div className="auth-container container">
-      <div className="auth-bg-glow"></div>
-      
-      <div className="auth-card glass">
-        <div className="auth-header">
-          <h2 className="auth-title">Bienvenido</h2>
-          <p className="auth-subtitle">Ingresa a tu cuenta para continuar</p>
+    <div className="auth-page">
+      <div className="auth-split">
+        <div className="auth-image-side">
+          <h1>Welcome<br/>Back</h1>
+          <p>Access your curated selections.</p>
         </div>
+        
+        <div className="auth-form-side">
+          <div className="auth-card">
+            <div className="auth-header">
+              <h2 className="auth-title">Log In</h2>
+              <p className="auth-subtitle">Please enter your details.</p>
+            </div>
 
-        <form className="auth-form" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label className="form-label" htmlFor="email">Correo Electrónico</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              className="form-input"
-              placeholder="tu@email.com"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
+            <form className="auth-form" onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label className="form-label" htmlFor="email">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  className="form-input"
+                  placeholder="name@example.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label" htmlFor="password">Password</label>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  className="form-input"
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="auth-options">
+                <label className="remember-me">
+                  <input type="checkbox" />
+                  <span>Remember me</span>
+                </label>
+                <a href="#" className="forgot-password">Forgot password?</a>
+              </div>
+
+              <button type="submit" className="btn-submit">
+                Sign In
+              </button>
+            </form>
+
+            <div className="auth-footer">
+              Don't have an account?
+              <Link to="/registro" className="auth-link">Sign up</Link>
+            </div>
           </div>
-
-          <div className="form-group">
-            <label className="form-label" htmlFor="password">Contraseña</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              className="form-input"
-              placeholder="••••••••"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="auth-options">
-            <label className="remember-me">
-              <input type="checkbox" />
-              <span>Recordarme</span>
-            </label>
-            <a href="#" className="forgot-password">¿Olvidaste tu contraseña?</a>
-          </div>
-
-          <button type="submit" className="btn btn-primary btn-submit">
-            Iniciar Sesión
-          </button>
-        </form>
-
-        <div className="auth-footer">
-          ¿No tienes una cuenta?
-          <Link to="/registro" className="auth-link">Regístrate</Link>
         </div>
       </div>
     </div>

@@ -14,4 +14,6 @@ public interface ProductoEnVentaRepository extends JpaRepository<ProductoEnVenta
     ProductoEnVenta findByUsuarioAndProductoIdAndActivoTrue(Usuario usuario, Long productoId);
 
     List<ProductoEnVenta> findByActivoTrueOrderByProductoTituloAsc();
+
+    List<ProductoEnVenta> findByProductoCategoriaAndActivoTrueOrderByProductoTituloAsc(String categoria);
 }

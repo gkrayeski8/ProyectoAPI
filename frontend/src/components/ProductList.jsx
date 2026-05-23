@@ -5,62 +5,102 @@ import './ProductList.css';
 
 const ProductList = () => {
     const [products, setProducts] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // `useEffect` se ejecuta una sola vez al montar el componente.
-    // Aquí iniciamos la carga de productos desde la API.
-    // pasar `[]` como segundo argumento hace que el efecto se ejecute sólo al montar
+    // Cargar categorías al montar
     useEffect(() => {
-        // `fetchProducts` es una función `async` que realiza la petición HTTP.
-        // - `async/await` permite escribir código asíncrono secuencialmente.
-        // - `try` intenta la petición y parseo JSON; `catch` maneja errores de red/CORS.
-        // - `finally` garantiza que la UI deje de mostrar el estado de carga.
-        const fetchProducts = async () => {
+        const fetchCategories = async () => {
             try {
-                // Asegurate de que el backend esté corriendo en el puerto 8080
-                const response = await fetch('http://localhost:8080/api/publicaciones');
+                const response = await fetch('http://localhost:8080/api/publicaciones/categorias');
+                if (response.ok) {
+                    const data = await response.json();
+                    setCategories(data);
+                }
+            } catch (err) {
+                console.error("Error al cargar categorías", err);
+            }
+        };
+        fetchCategories();
+    }, []);
+
+    // Cargar productos cada vez que cambia la categoría seleccionada
+    useEffect(() => {
+        const fetchProducts = async () => {
+            setLoading(true);
+            try {
+                const url = selectedCategory 
+                    ? `http://localhost:8080/api/publicaciones?categoria=${encodeURIComponent(selectedCategory)}`
+                    : 'http://localhost:8080/api/publicaciones';
+                
+                const response = await fetch(url);
                 if (!response.ok) {
                     throw new Error('Error al cargar los productos');
                 }
                 const data = await response.json();
                 setProducts(data);
             } catch (err) {
-                // Mostrar el error (o usar datos locales como fallback en ejercicios)
                 setError(err.message);
             } finally {
-                // Siempre desactivar el loading, haya ocurrido error o no.
                 setLoading(false);
             }
         };
 
         fetchProducts();
-    }, []);
+    }, [selectedCategory]);
 
-    if (loading) return <div>Cargando productos...</div>;
-    if (error) return <div>Error: {error}</div>;
+    // Eliminado el return temprano para que la barra lateral (sidebar) no desaparezca al cargar
 
-    // Normalizar posibles formas de respuesta: array directo o { productos: [...] } u objetos comunes
     const items = Array.isArray(products)
         ? products
         : products?.productos || products?.data || products?.items || [];
 
     return (
-        <div className="product-list-container">
-            <h1 className="product-list-title">Lista de Productos</h1>
-            <div className="product-grid">
-                {items.length === 0 && <div>No hay productos disponibles.</div>}
-
-                {items.map(p => (
-                    <Link
-                        to={`/products/${p.id}`}
-                        key={p.id}
-                        className="product-card-link"
+        <div className="product-page">
+            <aside className="sidebar">
+                <h2 className="sidebar-title">Categorías</h2>
+                <ul className="category-list">
+                    <li 
+                        className={`category-item ${selectedCategory === '' ? 'active' : ''}`}
+                        onClick={() => setSelectedCategory('')}
                     >
-                        {/* Pasamos el objeto 'p' como la prop 'producto' */}
-                        <ProductCard producto={p} />
-                    </Link>
-                ))}
+                        Todas las categorías
+                    </li>
+                    {categories.map(cat => (
+                        <li 
+                            key={cat}
+                            className={`category-item ${selectedCategory === cat ? 'active' : ''}`}
+                            onClick={() => setSelectedCategory(cat)}
+                        >
+                            {cat}
+                        </li>
+                    ))}
+                </ul>
+            </aside>
+            <div className="product-list-container">
+                <h1 className="product-list-title">Marketplace Explorer</h1>
+                
+                {loading ? (
+                    <div className="loading">Cargando productos...</div>
+                ) : error ? (
+                    <div className="error">Error: {error}</div>
+                ) : (
+                    <div className="product-grid">
+                        {items.length === 0 && <div>No hay productos disponibles.</div>}
+
+                        {items.map(p => (
+                            <Link
+                                to={`/products/${p.id}`}
+                                key={p.id}
+                                className="product-card-link"
+                            >
+                                <ProductCard producto={p} />
+                            </Link>
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     );

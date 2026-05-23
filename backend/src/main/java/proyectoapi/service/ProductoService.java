@@ -24,10 +24,15 @@ public class ProductoService {
     @Autowired
     private ProductoRepository productoRepository;
 
-    /** Obtiene todos los productos ordenados por título */
-    public List<ProductoResponseDTO> obtenerCatalogo() {
-        return productoEnVentaRepository.findByActivoTrueOrderByProductoTituloAsc()
-                .stream()
+    /** Obtiene todos los productos, opcionalmente filtrados por categoría y ordenados por título */
+    public List<ProductoResponseDTO> obtenerCatalogo(String categoria) {
+        List<ProductoEnVenta> productos;
+        if (categoria != null && !categoria.isEmpty()) {
+            productos = productoEnVentaRepository.findByProductoCategoriaAndActivoTrueOrderByProductoTituloAsc(categoria);
+        } else {
+            productos = productoEnVentaRepository.findByActivoTrueOrderByProductoTituloAsc();
+        }
+        return productos.stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }

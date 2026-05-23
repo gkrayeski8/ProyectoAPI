@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import proyectoapi.dto.ProductoResponseDTO;
 import proyectoapi.service.ProductoService;
@@ -19,10 +20,10 @@ public class ProductoController {
     @Autowired
     private ProductoService productoService;
 
-    /** Devuelve la lista completa de productos en el catálogo */
+    /** Devuelve la lista completa de productos en el catálogo, opcionalmente filtrada */
     @GetMapping
-    public ResponseEntity<List<ProductoResponseDTO>> obtenerCatalogo() {
-        return ResponseEntity.ok(productoService.obtenerCatalogo());
+    public ResponseEntity<List<ProductoResponseDTO>> obtenerCatalogo(@RequestParam(required = false) String categoria) {
+        return ResponseEntity.ok(productoService.obtenerCatalogo(categoria));
     }
 
     /** Lista todas las categorías disponibles de productos */
