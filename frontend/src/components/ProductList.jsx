@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import {Link} from 'react-router-dom';
 import ProductCard from './ProductCard';
 import './ProductList.css';
 
@@ -51,14 +52,14 @@ const ProductList = () => {
                 {items.length === 0 && <div>No hay productos disponibles.</div>}
 
                 {items.map(p => (
-                    <a
-                        href={`/products/${p.id}`}
-                        key={p.id || Math.random()}
+                    <Link
+                        to={`/products/${p.id}`}
+                        key={p.id}
                         className="product-card-link"
                     >
                         {/* Pasamos el objeto 'p' como la prop 'producto' */}
                         <ProductCard producto={p} />
-                    </a>
+                    </Link>
                 ))}
             </div>
         </div>
