@@ -43,13 +43,15 @@ function App() {
       </nav>
 
       <main style={{ marginTop: '80px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <Routes>
-          <Route path="/" element={<ProductList />} />
-          <Route path="/products" element={<ProductList />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/registro" element={<Registro />} />
-          <Route path="/products/:id" element={<ProductDetail/>} />
-        </Routes>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<ProductList />} />
+            <Route path="/products" element={<ProductList />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/registro" element={<Registro />} />
+            <Route path="/products/:id" element={<ProductDetail />} />
+          </Routes>
+        </BrowserRouter>
       </main>
 
       <footer className="footer">

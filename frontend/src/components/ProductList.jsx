@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import ProductCard from './ProductCard';
 import './ProductList.css';
 
@@ -31,10 +31,10 @@ const ProductList = () => {
         const fetchProducts = async () => {
             setLoading(true);
             try {
-                const url = selectedCategory 
+                const url = selectedCategory
                     ? `http://localhost:8080/api/publicaciones?categoria=${encodeURIComponent(selectedCategory)}`
                     : 'http://localhost:8080/api/publicaciones';
-                
+
                 const response = await fetch(url);
                 if (!response.ok) {
                     throw new Error('Error al cargar los productos');
@@ -62,14 +62,14 @@ const ProductList = () => {
             <aside className="sidebar">
                 <h2 className="sidebar-title">Categorías</h2>
                 <ul className="category-list">
-                    <li 
+                    <li
                         className={`category-item ${selectedCategory === '' ? 'active' : ''}`}
                         onClick={() => setSelectedCategory('')}
                     >
                         Todas las categorías
                     </li>
                     {categories.map(cat => (
-                        <li 
+                        <li
                             key={cat}
                             className={`category-item ${selectedCategory === cat ? 'active' : ''}`}
                             onClick={() => setSelectedCategory(cat)}
@@ -81,9 +81,9 @@ const ProductList = () => {
             </aside>
             <div className="product-list-container">
                 <h1 className="product-list-title">Marketplace Explorer</h1>
-                
+
                 {loading ? (
-                    <div className="loading">Cargando productos...</div>
+                    <div className="spinner-container"><div className='spinner'></div></div>
                 ) : error ? (
                     <div className="error">Error: {error}</div>
                 ) : (
