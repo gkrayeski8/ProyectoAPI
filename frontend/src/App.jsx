@@ -8,7 +8,7 @@ import { Link, Routes, Route, useLocation } from 'react-router-dom';
 import './App.css';
 
 function App() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
   const location = useLocation();
 
   useEffect(() => {
