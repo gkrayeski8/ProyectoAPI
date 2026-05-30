@@ -35,7 +35,7 @@ const ProductCard = ({ producto }) => {
                     ${Number(price).toLocaleString('es-AR')}
                 </p>
                 <button className="favorite-btn" onClick={(e) => {
-                    e.preventDefault(); // ¡MUY IMPORTANTE! 
+                    e.preventDefault();
 
                     if (isFavorite) {
                         removeFavorite(producto.id);
