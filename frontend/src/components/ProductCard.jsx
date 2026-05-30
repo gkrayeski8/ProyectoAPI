@@ -1,27 +1,32 @@
 import React from 'react';
 import './ProductCard.css';
+import imgNotFound from '../assets/images/no-image.jpg';
+import { useFavorites } from './FavoriteProvider';
 
-/**
- * Componente atómico para representar un producto individual.
- * Recibe el objeto 'producto' como prop.
- */
+
 const ProductCard = ({ producto }) => {
-    // Desestructuramos para un código más limpio
+
+    const { favorites, addFavorite, removeFavorite } = useFavorites();
+
     const id = producto.id ?? producto.codigo;
     const name = producto.titulo ?? producto.nombre ?? 'Sin nombre';
     const price = producto.precio ?? 0;
     const img = producto.urlImagen ?? producto.imagen ?? '';
     const description = producto.descripcion ?? '';
+    const isFavorite = favorites.some(fav => fav.id === id);
 
     return (
         <div className="product-card">
             <div className="image-container">
                 {img ? (
-                    <img src={img} alt={name} className="product-image" />
+                    <img
+                        src={img}
+                        alt={name}
+                        className="product-image"
+                        onError={(e) => { e.target.src = imgNotFound }}
+                    />
                 ) : (
-                    <div className="product-image" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
-                        No Image
-                    </div>
+                    <img src={imgNotFound} alt="No image" className="product-image" />
                 )}
             </div>
             <div className="product-info">
@@ -29,6 +34,17 @@ const ProductCard = ({ producto }) => {
                 <p className="product-price">
                     ${Number(price).toLocaleString('es-AR')}
                 </p>
+                <button className="favorite-btn" onClick={(e) => {
+                    e.preventDefault(); // ¡MUY IMPORTANTE! 
+
+                    if (isFavorite) {
+                        removeFavorite(producto.id);
+                    } else {
+                        addFavorite(producto);
+                    }
+                }}>
+                    {isFavorite ? '❤️Eliminar' : '🤍Agregar'}
+                </button>
                 <span className="view-detail">View Details &rarr;</span>
             </div>
         </div>

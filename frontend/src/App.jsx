@@ -3,7 +3,7 @@ import ProductList from './components/ProductList';
 import ProductDetail from './components/ProductDetail';
 import Login from './components/Login';
 import Registro from './components/Registro';
-import AdminPanel from './components/AdminPanel';
+import Favorites from './components/Favorites';
 import { Link, Routes, Route, useLocation } from 'react-router-dom';
 import './App.css';
 
@@ -35,6 +35,9 @@ function App() {
             <Link to="/login" className="nav-btn">
               Login
             </Link>
+            <Link to="/favorites" className="nav-btn">
+              Favoritos
+            </Link>
             <button onClick={toggleTheme} className="theme-toggle" aria-label="Toggle theme">
               {isDarkMode ? '🌙' : '☀️'}
             </button>
@@ -49,6 +52,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Registro />} />
           <Route path="/products/:id" element={<ProductDetail />} />
+          <Route path="/favorites" element={<Favorites />} />
         </Routes>
       </main>
 
