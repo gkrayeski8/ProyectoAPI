@@ -60,9 +60,9 @@ public class SecurityConfig {
                 .exceptionHandling(excepcion -> excepcion.authenticationEntryPoint(manejadorNoAutorizado))
                 .sessionManagement(sesion -> sesion.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(autenticacion -> autenticacion.requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/publicaciones/**").permitAll() // temporal
+                        .requestMatchers("/api/publicationes/**").permitAll() // temporal
                         .requestMatchers("/api/users/product/**").permitAll() // .hasRole("VENDEDOR")
-                        .requestMatchers("/api/carrito/**").hasRole("COMPRADOR")
+                        .requestMatchers("/api/cart/**").hasRole("COMPRADOR")
                         .requestMatchers("/api/compras/**").hasRole("COMPRADOR")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated());

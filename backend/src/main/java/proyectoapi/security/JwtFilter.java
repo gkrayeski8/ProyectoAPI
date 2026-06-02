@@ -24,7 +24,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtils jwtUtils;
     private final UserDetailsServiceImpl userDetailsService;
 
-    /** Intercepta la petición para autenticar al usuario mediante el token */
+    /** Intercepta la petición para autenticar al user mediante el token */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -32,17 +32,17 @@ public class JwtFilter extends OncePerRequestFilter {
         try {
             String jwt = extraerJwt(request);
             if (jwt != null && jwtUtils.validarTokenJwt(jwt)) {
-                String nombreUsuario = jwtUtils.obtenerNombreUsuarioDeJwt(jwt);
+                String nameUser = jwtUtils.getNameUserDeJwt(jwt);
 
-                UserDetails detallesUsuario = userDetailsService.loadUserByUsername(nombreUsuario);
+                UserDetails detallesUser = userDetailsService.loadUserByUsername(nameUser);
                 UsernamePasswordAuthenticationToken autenticacion = new UsernamePasswordAuthenticationToken(
-                        detallesUsuario, null, detallesUsuario.getAuthorities());
+                        detallesUser, null, detallesUser.getAuthorities());
                 autenticacion.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(autenticacion);
             }
         } catch (Exception e) {
-            logger.error("No se puede establecer la autenticacion del usuario: {}", e);
+            logger.error("No se puede establecer la autenticacion del user: {}", e);
         }
 
         filterChain.doFilter(request, response);

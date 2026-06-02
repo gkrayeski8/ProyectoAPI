@@ -13,14 +13,14 @@ public class JwtResponseDTO {
     private String tipo = "Bearer";
     private Long id;
     private String email;
-    private String nombre;
+    private String name;
     private Role role;
 
-    public JwtResponseDTO(String token, Long id, String email, String nombre, Role role) {
+    public JwtResponseDTO(String token, Long id, String email, String name, Role role) {
         this.token = token;
         this.id = id;
         this.email = email;
-        this.nombre = nombre;
+        this.name = name;
         this.role = role;
     }
 }

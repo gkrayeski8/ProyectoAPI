@@ -4,19 +4,19 @@ import './ProductDetail.css';
 
 export default function ProductDetail() {
   const { id } = useParams();
-  const [producto, setProducto] = useState(null);
+  const [product, setProduct] = useState(null);
   const [cargando, setCargando] = useState(true);
 
   useEffect(() => {
-    fetch(`http://localhost:8080/api/publicaciones/${id}`)
+    fetch(`http://localhost:8080/api/publicationes/${id}`)
       .then((response) => {
         if (!response.ok) {
-          throw new Error('Producto no encontrado');
+          throw new Error('Product no encontrado');
         }
         return response.json();
       })
       .then((data) => {
-        setProducto(data);
+        setProduct(data);
         setCargando(false);
       })
       .catch((error) => {
@@ -29,7 +29,7 @@ export default function ProductDetail() {
     return <div className="loading-container"><h3>Loading product details...</h3></div>;
   }
 
-  if (!producto) {
+  if (!product) {
     return (
       <div className="error-container">
         <h3>Product not found or an error occurred.</h3>
@@ -38,12 +38,12 @@ export default function ProductDetail() {
     );
   }
 
-  const img = producto.urlImagen || producto.imagen || '';
-  const title = producto.titulo || producto.nombre || 'Untitled Product';
-  const price = producto.precio || 0;
-  const description = producto.descripcion || 'No description available.';
-  const category = producto.categoria || 'General';
-  const stock = producto.stock ?? 0;
+  const img = product.urlImage || product.image || '';
+  const title = product.titulo || product.name || 'Untitled Product';
+  const price = product.price || 0;
+  const description = product.description || 'No description available.';
+  const category = product.category || 'General';
+  const stock = product.stock ?? 0;
 
   return (
     <div className="detail-page">

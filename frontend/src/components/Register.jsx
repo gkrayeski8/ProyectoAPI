@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './Login.css';
+import './Login.css'; // Reusing Login.css for consistent auth styling
 
-export default function Login() {
+export default function Register() {
   const [formData, setFormData] = useState({
+    name: '',
     email: '',
     password: ''
   });
@@ -14,26 +15,40 @@ export default function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Login attempt with:', formData);
-    // Add real login logic here
+    console.log('Registration attempt with:', formData);
+    // Add real registration logic here
   };
 
   return (
     <div className="auth-page">
       <div className="auth-split">
         <div className="auth-image-side">
-          <h1>Welcome<br/>Back</h1>
-          <p>Access your curated selections.</p>
+          <h1>Join<br/>Us</h1>
+          <p>Create an account to unlock exclusive benefits.</p>
         </div>
         
         <div className="auth-form-side">
           <div className="auth-card">
             <div className="auth-header">
-              <h2 className="auth-title">Log In</h2>
-              <p className="auth-subtitle">Please enter your details.</p>
+              <h2 className="auth-title">Sign Up</h2>
+              <p className="auth-subtitle">Fill in your details below.</p>
             </div>
 
             <form className="auth-form" onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label className="form-label" htmlFor="name">Full Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  className="form-input"
+                  placeholder="John Doe"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
               <div className="form-group">
                 <label className="form-label" htmlFor="email">Email</label>
                 <input
@@ -62,22 +77,14 @@ export default function Login() {
                 />
               </div>
 
-              <div className="auth-options">
-                <label className="remember-me">
-                  <input type="checkbox" />
-                  <span>Remember me</span>
-                </label>
-                <a href="#" className="forgot-password">Forgot password?</a>
-              </div>
-
               <button type="submit" className="btn-submit">
-                Sign In
+                Create Account
               </button>
             </form>
 
             <div className="auth-footer">
-              Don't have an account?
-              <Link to="/register" className="auth-link">Sign up</Link>
+              Already have an account?
+              <Link to="/login" className="auth-link">Log in</Link>
             </div>
           </div>
         </div>

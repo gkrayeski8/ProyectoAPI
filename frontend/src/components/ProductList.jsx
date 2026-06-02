@@ -14,7 +14,7 @@ const ProductList = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await fetch('http://localhost:8080/api/publicaciones/categorias');
+                const response = await fetch('http://localhost:8080/api/publicationes/categorys');
                 if (response.ok) {
                     const data = await response.json();
                     setCategories(data);
@@ -26,18 +26,18 @@ const ProductList = () => {
         fetchCategories();
     }, []);
 
-    // Cargar productos cada vez que cambia la categoría seleccionada
+    // Cargar products cada vez que cambia la categoría seleccionada
     useEffect(() => {
         const fetchProducts = async () => {
             setLoading(true);
             try {
                 const url = selectedCategory
-                    ? `http://localhost:8080/api/publicaciones?categoria=${encodeURIComponent(selectedCategory)}`
-                    : 'http://localhost:8080/api/publicaciones';
+                    ? `http://localhost:8080/api/publicationes?category=${encodeURIComponent(selectedCategory)}`
+                    : 'http://localhost:8080/api/publicationes';
 
                 const response = await fetch(url);
                 if (!response.ok) {
-                    throw new Error('Error al cargar los productos');
+                    throw new Error('Error al cargar los products');
                 }
                 const data = await response.json();
                 setProducts(data);
@@ -55,7 +55,7 @@ const ProductList = () => {
 
     const items = Array.isArray(products)
         ? products
-        : products?.productos || products?.data || products?.items || [];
+        : products?.products || products?.data || products?.items || [];
 
     return (
         <div className="product-page">
@@ -88,7 +88,7 @@ const ProductList = () => {
                     <div className="error">Error: {error}</div>
                 ) : (
                     <div className="product-grid">
-                        {items.length === 0 && <div>No hay productos disponibles.</div>}
+                        {items.length === 0 && <div>No hay products disponibles.</div>}
 
                         {items.map(p => (
                             <Link
@@ -96,7 +96,7 @@ const ProductList = () => {
                                 key={p.id}
                                 className="product-card-link"
                             >
-                                <ProductCard producto={p} />
+                                <ProductCard product={p} />
                             </Link>
                         ))}
                     </div>

@@ -40,7 +40,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDTO> handleBadCredentialsException(BadCredentialsException ex) {
         ErrorResponseDTO errorResponse = new ErrorResponseDTO(
                 HttpStatus.UNAUTHORIZED.value(),
-                "Credenciales inválidas. Usuario o contraseña incorrectos.",
+                "Credenciales inválidas. User o contraseña incorrectos.",
                 LocalDateTime.now());
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }

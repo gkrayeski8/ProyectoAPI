@@ -28,20 +28,20 @@ public class JwtUtils {
         this.clave = Keys.hmacShaKeyFor(secretoJwt.getBytes());
     }
 
-    /** Crea un token firmado para el usuario autenticado */
+    /** Crea un token firmado para el user autenticado */
     public String generarTokenJwt(Authentication autenticacion) {
-        UserDetailsImpl usuarioPrincipal = (UserDetailsImpl) autenticacion.getPrincipal();
+        UserDetailsImpl userPrincipal = (UserDetailsImpl) autenticacion.getPrincipal();
 
         return Jwts.builder()
-                .setSubject((usuarioPrincipal.getUsername()))
+                .setSubject((userPrincipal.getUsername()))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + expiracionJwtMs))
                 .signWith(clave, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    /** Recupera el nombre de usuario contenido en el token */
-    public String obtenerNombreUsuarioDeJwt(String token) {
+    /** Recupera el name de user contenido en el token */
+    public String getNameUserDeJwt(String token) {
         return Jwts.parserBuilder().setSigningKey(clave).build()
                 .parseClaimsJws(token).getBody().getSubject();
     }

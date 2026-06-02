@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import ProductList from './components/ProductList';
 import ProductDetail from './components/ProductDetail';
 import Login from './components/Login';
-import Registro from './components/Registro';
+import Register from './components/Register';
 import Favorites from './components/Favorites';
 import { Link, Routes, Route, useLocation } from 'react-router-dom';
 import './App.css';
@@ -50,7 +50,7 @@ function App() {
           <Route path="/" element={<ProductList />} />
           <Route path="/products" element={<ProductList />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/registro" element={<Registro />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/favorites" element={<Favorites />} />
         </Routes>

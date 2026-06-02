@@ -4,15 +4,15 @@ import imgNotFound from '../assets/images/no-image.jpg';
 import { useFavorites } from './FavoriteProvider';
 
 
-const ProductCard = ({ producto }) => {
+const ProductCard = ({ product }) => {
 
     const { favorites, addFavorite, removeFavorite } = useFavorites();
 
-    const id = producto.id ?? producto.codigo;
-    const name = producto.titulo ?? producto.nombre ?? 'Sin nombre';
-    const price = producto.precio ?? 0;
-    const img = producto.urlImagen ?? producto.imagen ?? '';
-    const description = producto.descripcion ?? '';
+    const id = product.id ?? product.codigo;
+    const name = product.titulo ?? product.name ?? 'Sin name';
+    const price = product.price ?? 0;
+    const img = product.urlImage ?? product.image ?? '';
+    const description = product.description ?? '';
     const isFavorite = favorites.some(fav => fav.id === id);
 
     return (
@@ -38,12 +38,12 @@ const ProductCard = ({ producto }) => {
                     e.preventDefault();
 
                     if (isFavorite) {
-                        removeFavorite(producto.id);
+                        removeFavorite(product.id);
                     } else {
-                        addFavorite(producto);
+                        addFavorite(product);
                     }
                 }}>
-                    {isFavorite ? '❤️Eliminar' : '🤍Agregar'}
+                    {isFavorite ? '❤️Delete' : '🤍Add'}
                 </button>
                 <span className="view-detail">View Details &rarr;</span>
             </div>

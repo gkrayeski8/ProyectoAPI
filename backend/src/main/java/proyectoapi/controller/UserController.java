@@ -15,74 +15,74 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import proyectoapi.dto.ActualizarPrecioDTO;
-import proyectoapi.dto.ProductoResponseDTO;
-import proyectoapi.dto.PublicacionDTO;
-import proyectoapi.dto.UsuarioRequestDTO;
-import proyectoapi.dto.UsuarioResponseDTO;
-import proyectoapi.model.Usuario;
-import proyectoapi.service.UsuarioService;
+import proyectoapi.dto.UpdatePriceDTO;
+import proyectoapi.dto.ProductResponseDTO;
+import proyectoapi.dto.PublicationDTO;
+import proyectoapi.dto.UserRequestDTO;
+import proyectoapi.dto.UserResponseDTO;
+import proyectoapi.model.User;
+import proyectoapi.service.UserService;
 
-/** Endpoints para gestión de usuarios y acciones de vendedores */
+/** Endpoints para gestión de users y acciones de vendedores */
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 
     @Autowired
-    private UsuarioService usuarioService;
+    private UserService userService;
 
-    /** Obtiene la lista de todos los vendedores registrados */
+    /** Obtiene la lista de all los vendedores registrados */
     @GetMapping("/vendedores")
-    public ResponseEntity<List<UsuarioResponseDTO>> obtenerVendedores() {
-        List<UsuarioResponseDTO> vendedores = usuarioService.getVendedores().stream()
+    public ResponseEntity<List<UserResponseDTO>> getVendedores() {
+        List<UserResponseDTO> vendedores = userService.getVendedores().stream()
                 .map(this::mapToDTO)
                 .collect(java.util.stream.Collectors.toList());
         return ResponseEntity.ok(vendedores);
     }
 
-    /** Permite a un vendedor publicar un nuevo producto */
+    /** Permite a un vendedor publicar un nuevo product */
     @PostMapping("/product/publish")
-    public ResponseEntity<ProductoResponseDTO> publicar(@RequestBody PublicacionDTO data) {
-        // El usuario se resuelve internamente desde el JWT
-        ProductoResponseDTO dto = usuarioService.publicarProducto(data.getTitulo(), data.getDescripcion(),
-                data.getCategoria(), data.getUrlImagen(), data.getStock(), data.getPrecio());
+    public ResponseEntity<ProductResponseDTO> publicar(@RequestBody PublicationDTO data) {
+        // El user se resuelve internamente desde el JWT
+        ProductResponseDTO dto = userService.publicarProduct(data.getTitulo(), data.getDescription(),
+                data.getCategory(), data.getUrlImage(), data.getStock(), data.getPrice());
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
-    /** Elimina un producto publicado por el vendedor */
+    /** Elimina un product publicado por el vendedor */
     @DeleteMapping("/product/{id}")
-    public ResponseEntity<Void> eliminarProducto(@PathVariable Long id) {
-        usuarioService.eliminarProducto(id);
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+        userService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
 
-    /** Actualiza parcialmente el precio de un producto publicado */
+    /** Actualiza parcialmente el price de un product publicado */
     @PatchMapping("/product/update")
-    public ResponseEntity<Void> actualizarPrecioProducto(@RequestBody ActualizarPrecioDTO actualizarPrecioDTO) {
+    public ResponseEntity<Void> updatePriceProduct(@RequestBody UpdatePriceDTO updatePriceDTO) {
         // La validacion de propietario se hace internamente en el servicio
-        usuarioService.updatePrecioProducto(actualizarPrecioDTO.getPrecioNuevo(), actualizarPrecioDTO.getId());
+        userService.updatePriceProduct(updatePriceDTO.getPriceNuevo(), updatePriceDTO.getId());
         return ResponseEntity.noContent().build();
     }
 
-    /** Actualiza el perfil del usuario autenticado */
+    /** Actualiza el perfil del user autenticado */
     @PutMapping("/me")
-    public ResponseEntity<UsuarioResponseDTO> updateProfile(@RequestBody UsuarioRequestDTO usuario) {
-        return ResponseEntity.ok(usuarioService.updateProfile(usuario));
+    public ResponseEntity<UserResponseDTO> updateProfile(@RequestBody UserRequestDTO user) {
+        return ResponseEntity.ok(userService.updateProfile(user));
     }
 
-    /** Obtiene el perfil del usuario autenticado */
+    /** Obtiene el perfil del user autenticado */
     @GetMapping("/me")
-    public ResponseEntity<UsuarioResponseDTO> getMyProfile() {
-        return ResponseEntity.ok(usuarioService.getMyProfile());
+    public ResponseEntity<UserResponseDTO> getMyProfile() {
+        return ResponseEntity.ok(userService.getMyProfile());
     }
 
-    /** Convierte una entidad Usuario a UsuarioResponseDTO */
-    private UsuarioResponseDTO mapToDTO(Usuario usuario) {
-        UsuarioResponseDTO dto = new UsuarioResponseDTO();
-        dto.setId(usuario.getId());
-        dto.setNombre(usuario.getNombre());
-        dto.setApellido(usuario.getApellido());
-        dto.setEmail(usuario.getEmail());
+    /** Convierte una entidad User a UserResponseDTO */
+    private UserResponseDTO mapToDTO(User user) {
+        UserResponseDTO dto = new UserResponseDTO();
+        dto.setId(user.getId());
+        dto.setName(user.getName());
+        dto.setApellido(user.getApellido());
+        dto.setEmail(user.getEmail());
         return dto;
     }
 }

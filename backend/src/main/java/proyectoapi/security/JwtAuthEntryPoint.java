@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
 
-    /** Se activa cuando un usuario no autenticado accede a un recurso */
+    /** Se activa cuando un user no autenticado accede a un recurso */
     @Override
     public void commence(HttpServletRequest peticion, HttpServletResponse respuesta,
             AuthenticationException excepcionAuth) throws IOException, ServletException {

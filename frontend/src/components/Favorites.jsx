@@ -9,11 +9,11 @@ const Favorites = () => {
         <div style={{ padding: '2rem' }}>
             <h1>Mis Favoritos</h1>
             {favorites.length === 0 ? (
-                <p>Aún no tienes productos favoritos.</p>
+                <p>Aún no tienes products favoritos.</p>
             ) : (
                 <div className="product-grid">
-                    {favorites.map(producto => (
-                        <ProductCard key={producto.id} producto={producto} />
+                    {favorites.map(product => (
+                        <ProductCard key={product.id} product={product} />
                     ))}
                 </div>
             )}

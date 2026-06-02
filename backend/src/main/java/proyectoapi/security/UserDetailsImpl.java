@@ -8,28 +8,28 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.AllArgsConstructor;
-import proyectoapi.model.Usuario;
+import proyectoapi.model.User;
 
-/** Adaptador para usar la entidad Usuario con Spring Security */
+/** Adaptador para usar la entidad User con Spring Security */
 @AllArgsConstructor
 public class UserDetailsImpl implements UserDetails {
 
-    private final Usuario usuario;
+    private final User user;
 
-    /** Mapea el rol del usuario a una autoridad de Spring Security */
+    /** Mapea el rol del user a una autoridad de Spring Security */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + usuario.getRole().name()));
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
     }
 
     @Override
     public String getPassword() {
-        return usuario.getPassword();
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return usuario.getEmail();
+        return user.getEmail();
     }
 
     @Override
@@ -37,10 +37,10 @@ public class UserDetailsImpl implements UserDetails {
         return true;
     }
 
-    /** Indica si la cuenta del usuario no está bloqueada */
+    /** Indica si la cuenta del user no está bloqueada */
     @Override
     public boolean isAccountNonLocked() {
-        return !usuario.isBloqueado();
+        return !user.isBloqueado();
     }
 
     @Override
@@ -53,7 +53,7 @@ public class UserDetailsImpl implements UserDetails {
         return true;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    public User getUser() {
+        return user;
     }
 }
