@@ -2,13 +2,15 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import './ProductDetail.css';
 
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
+
 export default function ProductDetail() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [cargando, setCargando] = useState(true);
 
   useEffect(() => {
-    fetch(`http://localhost:8080/api/publicationes/${id}`)
+    fetch(`${BASE_URL}/publications/${id}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error('Product no encontrado');

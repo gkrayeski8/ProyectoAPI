@@ -14,7 +14,7 @@ import java.util.List;
 
 /** Endpoints para consultar el catálogo y detalles de products */
 @RestController
-@RequestMapping("/api/publicationes")
+@RequestMapping("/api/publications")
 public class ProductController {
 
     @Autowired
@@ -27,9 +27,9 @@ public class ProductController {
     }
 
     /** Lista todas las categorías disponibles de products */
-    @GetMapping("/categorys")
-    public ResponseEntity<List<String>> getCategorys() {
-        return ResponseEntity.ok(productService.getCategorys());
+    @GetMapping("/categories")
+    public ResponseEntity<List<String>> getCategories() {
+        return ResponseEntity.ok(productService.getCategories());
     }
 
     /** Obtiene la información detallada de un product por ID */

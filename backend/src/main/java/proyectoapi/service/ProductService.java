@@ -38,8 +38,8 @@ public class ProductService {
     }
 
     /** Obtiene la lista de categorías únicas de products */
-    public List<String> getCategorys() {
-        return productRepository.findDistinctCategorys();
+    public List<String> getCategories() {
+        return productRepository.findDistinctCategories();
     }
 
     /** Busca los detalles de un product por su ID */

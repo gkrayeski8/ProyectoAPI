@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import ProductCard from './ProductCard';
 import './ProductList.css';
 
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
+
 const ProductList = () => {
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -14,7 +16,7 @@ const ProductList = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await fetch('http://localhost:8080/api/publicationes/categorys');
+                const response = await fetch(`${BASE_URL}/publications/categories`);
                 if (response.ok) {
                     const data = await response.json();
                     setCategories(data);
@@ -32,8 +34,8 @@ const ProductList = () => {
             setLoading(true);
             try {
                 const url = selectedCategory
-                    ? `http://localhost:8080/api/publicationes?category=${encodeURIComponent(selectedCategory)}`
-                    : 'http://localhost:8080/api/publicationes';
+                    ? `${BASE_URL}/publications?category=${encodeURIComponent(selectedCategory)}`
+                    : `${BASE_URL}/publications`;
 
                 const response = await fetch(url);
                 if (!response.ok) {
