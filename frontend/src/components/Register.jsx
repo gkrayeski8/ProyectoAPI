@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { registerUser } from '../store/slices/authSlice';
 import './Login.css'; // Reusing Login.css for consistent auth styling
 
 export default function Register() {
@@ -9,14 +11,21 @@ export default function Register() {
     password: ''
   });
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { loading, error } = useSelector(state => state.auth);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Registration attempt with:', formData);
-    // Add real registration logic here
+    dispatch(registerUser(formData)).then((result) => {
+      if (!result.error) {
+        navigate('/');
+      }
+    });
   };
 
   return (
@@ -77,8 +86,10 @@ export default function Register() {
                 />
               </div>
 
-              <button type="submit" className="btn-submit">
-                Create Account
+              {error && <div className="error-message" style={{color: 'red', marginBottom: '10px'}}>{error}</div>}
+
+              <button type="submit" className="btn-submit" disabled={loading}>
+                {loading ? 'Creating Account...' : 'Create Account'}
               </button>
             </form>
 

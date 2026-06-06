@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginUser } from '../store/slices/authSlice';
 import './Login.css';
 
 export default function Login() {
@@ -8,14 +10,21 @@ export default function Login() {
     password: ''
   });
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { loading, error } = useSelector(state => state.auth);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Login attempt with:', formData);
-    // Add real login logic here
+    dispatch(loginUser(formData)).then((result) => {
+      if (!result.error) {
+        navigate('/');
+      }
+    });
   };
 
   return (
@@ -70,8 +79,10 @@ export default function Login() {
                 <a href="#" className="forgot-password">Forgot password?</a>
               </div>
 
-              <button type="submit" className="btn-submit">
-                Sign In
+              {error && <div className="error-message" style={{color: 'red', marginBottom: '10px'}}>{error}</div>}
+              
+              <button type="submit" className="btn-submit" disabled={loading}>
+                {loading ? 'Signing in...' : 'Sign In'}
               </button>
             </form>
 
