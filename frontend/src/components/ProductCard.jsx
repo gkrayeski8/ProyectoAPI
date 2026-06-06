@@ -1,12 +1,14 @@
 import React from 'react';
 import './ProductCard.css';
 import imgNotFound from '../assets/images/no-image.jpg';
-import { useFavorites } from './FavoriteProvider.jsx';
+import { useSelector, useDispatch } from 'react-redux';
+import { addFavorite, removeFavorite } from '../store/slices/favoritesSlice';
 
 
 const ProductCard = ({ product }) => {
 
-    const { favorites, addFavorite, removeFavorite } = useFavorites();
+    const favorites = useSelector(state => state.favorites.items);
+    const dispatch = useDispatch();
 
     const id = product.id ?? product.codigo;
     const name = product.titulo ?? product.name ?? 'Sin name';
@@ -38,9 +40,9 @@ const ProductCard = ({ product }) => {
                     e.preventDefault();
 
                     if (isFavorite) {
-                        removeFavorite(product.id);
+                        dispatch(removeFavorite(product.id));
                     } else {
-                        addFavorite(product);
+                        dispatch(addFavorite(product));
                     }
                 }}>
                     {isFavorite ? '❤️Delete' : '🤍Add'}
