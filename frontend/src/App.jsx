@@ -5,6 +5,7 @@ import ProductDetail from './components/ProductDetail';
 import Login from './components/Login';
 import Register from './components/Register';
 import Favorites from './components/Favorites';
+import Cart from './components/Cart';
 import { Link, Routes, Route, useLocation } from 'react-router-dom';
 import './App.css';
 
@@ -34,6 +35,9 @@ function App() {
             <Link to="/favorites" className="nav-btn">
               Favoritos
             </Link>
+            <Link to="/cart" className="nav-btn">
+              Carrito
+            </Link>
             <button onClick={toggleTheme} className="theme-toggle" aria-label="Toggle theme">
               {isDarkMode ? '🌙' : '☀️'}
             </button>
@@ -49,6 +53,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/favorites" element={<Favorites />} />
+          <Route path="/cart" element={<Cart />} />
         </Routes>
       </main>
 
