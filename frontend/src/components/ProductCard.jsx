@@ -1,12 +1,14 @@
 import React from 'react';
 import './ProductCard.css';
 import imgNotFound from '../assets/images/no-image.jpg';
-import { useFavorites } from './FavoriteProvider';
+import { useSelector, useDispatch } from 'react-redux';
+import { toggleFavorite } from '../store/slices/favoriteSlice';
 
 
 const ProductCard = ({ product }) => {
 
-    const { favorites, addFavorite, removeFavorite } = useFavorites();
+    const dispatch = useDispatch();
+    const favorites = useSelector(state => state.favorites.items);
 
     const id = product.id ?? product.codigo;
     const name = product.titulo ?? product.name ?? 'Sin name';
@@ -36,12 +38,8 @@ const ProductCard = ({ product }) => {
                 </p>
                 <button className="favorite-btn" onClick={(e) => {
                     e.preventDefault();
-
-                    if (isFavorite) {
-                        removeFavorite(product.id);
-                    } else {
-                        addFavorite(product);
-                    }
+                    // Usamos la nueva acción toggleFavorite de Redux Toolkit
+                    dispatch(toggleFavorite(product));
                 }}>
                     {isFavorite ? '❤️Delete' : '🤍Add'}
                 </button>

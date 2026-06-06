@@ -1,16 +1,20 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
-import { FavoriteProvider } from './components/FavoriteProvider.jsx'
+import { Provider } from 'react-redux'
+import { store } from './store/index.js'
+import { ThemeProvider } from './context/ThemeContext.jsx'
 import './index.css'
 import App from './App.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <FavoriteProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </FavoriteProvider>
+    <Provider store={store}>
+      <ThemeProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </ThemeProvider>
+    </Provider>
   </StrictMode>,
 )
