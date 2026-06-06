@@ -1,5 +1,5 @@
 import React from 'react';
-import { useFavorites } from './FavoriteProvider';
+import { useFavorites } from './FavoriteProvider.jsx';
 import ProductCard from './ProductCard';
 
 const Favorites = () => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import './ProductCard.css';
 import imgNotFound from '../assets/images/no-image.jpg';
-import { useFavorites } from './FavoriteProvider';
+import { useFavorites } from './FavoriteProvider.jsx';
 
 
 const ProductCard = ({ product }) => {
