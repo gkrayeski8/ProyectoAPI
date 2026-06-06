@@ -1,9 +1,9 @@
 import React from 'react';
-import { useFavorites } from './FavoriteProvider';
+import { useSelector } from 'react-redux';
 import ProductCard from './ProductCard';
 
 const Favorites = () => {
-    const { favorites } = useFavorites();
+    const favorites = useSelector((state) => state.favorites.items);
 
     return (
         <div style={{ padding: '2rem' }}>

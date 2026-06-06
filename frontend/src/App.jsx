@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { useTheme } from './context/ThemeProvider.jsx';
 import ProductList from './components/ProductList';
 import ProductDetail from './components/ProductDetail';
 import Login from './components/Login';
@@ -8,18 +9,13 @@ import { Link, Routes, Route, useLocation } from 'react-router-dom';
 import './App.css';
 
 function App() {
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const { isDarkMode, toggleTheme } = useTheme();
   const location = useLocation();
 
   useEffect(() => {
     // Scroll to top on route change
     window.scrollTo(0, 0);
   }, [location.pathname]);
-
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-    document.documentElement.setAttribute('data-theme', isDarkMode ? 'light' : 'dark');
-  };
 
   return (
     <div className="app-container">
