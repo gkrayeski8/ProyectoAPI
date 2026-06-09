@@ -7,6 +7,7 @@ import './Login.css'; // Reusing Login.css for consistent auth styling
 export default function Register() {
   const [formData, setFormData] = useState({
     name: '',
+    apellido: '',
     email: '',
     password: ''
   });
@@ -45,14 +46,28 @@ export default function Register() {
 
             <form className="auth-form" onSubmit={handleSubmit}>
               <div className="form-group">
-                <label className="form-label" htmlFor="name">Full Name</label>
+                <label className="form-label" htmlFor="name">Nombre</label>
                 <input
                   type="text"
                   id="name"
                   name="name"
                   className="form-input"
-                  placeholder="John Doe"
+                  placeholder="Juan"
                   value={formData.name}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label" htmlFor="apellido">Apellido</label>
+                <input
+                  type="text"
+                  id="apellido"
+                  name="apellido"
+                  className="form-input"
+                  placeholder="Pérez"
+                  value={formData.apellido}
                   onChange={handleChange}
                   required
                 />

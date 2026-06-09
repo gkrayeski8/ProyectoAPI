@@ -16,8 +16,8 @@ export const loginUser = createAsyncThunk(
         throw new Error('Credenciales inválidas');
       }
       const data = await response.json();
-      // data debería contener el JWT. Guardamos el token en localStorage
       localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify({ id: data.id, name: data.name, email: data.email, role: data.role }));
       return data;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -39,6 +39,7 @@ export const registerUser = createAsyncThunk(
       }
       const data = await response.json();
       localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify({ id: data.id, name: data.name, email: data.email, role: data.role }));
       return data;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -46,8 +47,10 @@ export const registerUser = createAsyncThunk(
   }
 );
 
+const storedUser = localStorage.getItem('user');
+
 const initialState = {
-  user: null, // Información del usuario (ej. mail, token)
+  user: storedUser ? JSON.parse(storedUser) : null,
   token: localStorage.getItem('token') || null,
   isAuthenticated: !!localStorage.getItem('token'),
   loading: false,
@@ -63,6 +66,7 @@ export const authSlice = createSlice({
       state.token = null;
       state.isAuthenticated = false;
       localStorage.removeItem('token');
+      localStorage.removeItem('user');
     },
   },
   extraReducers: (builder) => {

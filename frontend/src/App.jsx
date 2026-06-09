@@ -1,17 +1,22 @@
 import { useEffect } from 'react';
 import { useTheme } from './context/ThemeProvider.jsx';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from './store/slices/authSlice';
 import ProductList from './components/ProductList';
 import ProductDetail from './components/ProductDetail';
 import Login from './components/Login';
 import Register from './components/Register';
 import Favorites from './components/Favorites';
 import Cart from './components/Cart';
+import AdminPanel from './components/AdminPanel';
 import { Link, Routes, Route, useLocation } from 'react-router-dom';
 import './App.css';
 
 function App() {
   const { isDarkMode, toggleTheme } = useTheme();
   const location = useLocation();
+  const dispatch = useDispatch();
+  const { isAuthenticated, user } = useSelector(state => state.auth);
 
   useEffect(() => {
     // Scroll to top on route change
@@ -29,15 +34,28 @@ function App() {
             <Link to="/products" className="nav-item">
               Shop
             </Link>
-            <Link to="/login" className="nav-btn">
-              Login
-            </Link>
             <Link to="/favorites" className="nav-btn">
               Favoritos
             </Link>
             <Link to="/cart" className="nav-btn">
               Carrito
             </Link>
+            {isAuthenticated ? (
+              <>
+                {user?.role === 'ADMIN' && (
+                  <Link to="/admin" className="nav-btn">Admin</Link>
+                )}
+                <span className="nav-user">Hola, {user?.name || user?.email || 'Usuario'}</span>
+                <button className="nav-btn" onClick={() => dispatch(logout())}>
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="nav-btn">Login</Link>
+                <Link to="/register" className="nav-btn">Registro</Link>
+              </>
+            )}
             <button onClick={toggleTheme} className="theme-toggle" aria-label="Toggle theme">
               {isDarkMode ? '🌙' : '☀️'}
             </button>
@@ -54,6 +72,7 @@ function App() {
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/admin" element={<AdminPanel />} />
         </Routes>
       </main>
 
