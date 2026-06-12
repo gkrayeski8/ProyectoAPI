@@ -2,7 +2,7 @@ import React from 'react';
 import './ProductCard.css';
 import imgNotFound from '../assets/images/no-image.jpg';
 import { useSelector, useDispatch } from 'react-redux';
-import { addFavorite, removeFavorite } from '../store/slices/favoritesSlice';
+import { addFavoriteAsync, deleteFavoriteAsync } from '../store/slices/favoritesSlice';
 
 
 /**
@@ -49,14 +49,28 @@ const ProductCard = ({ product }) => {
                 <button className="favorite-btn" onClick={(e) => {
                     e.preventDefault(); // Prevenimos la navegación al link padre
 
-                    // Despachamos la acción correspondiente dependiendo de si es favorito o no
+                    // Despachamos la acción asíncrona correspondiente dependiendo de si es favorito o no
                     if (isFavorite) {
-                        dispatch(removeFavorite(product.id));
+                        dispatch(deleteFavoriteAsync(product)); // Tu nuevo thunk espera el product completo para sacar el ID
                     } else {
-                        dispatch(addFavorite(product));
+                        dispatch(addFavoriteAsync(product));
                     }
                 }}>
-                    {isFavorite ? '❤️Delete' : '🤍Add'}
+                    {isFavorite ? (
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="#ff4757" stroke="#ff4757" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
+                            <span>Delete</span>
+                        </div>
+                    ) : (
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
+                            <span>Add</span>
+                        </div>
+                    )}
                 </button>
                 <span className="view-detail">View Details &rarr;</span>
             </div>
