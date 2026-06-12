@@ -14,6 +14,12 @@ import './App.css';
 
 function App() {
   const { isDarkMode, toggleTheme } = useTheme();
+  
+  const getInitials = (name, email) => {
+    if (name) return name.charAt(0).toUpperCase();
+    if (email) return email.charAt(0).toUpperCase();
+    return 'U';
+  };
   const location = useLocation();
   const dispatch = useDispatch();
   const { isAuthenticated, user } = useSelector(state => state.auth);
@@ -27,13 +33,10 @@ function App() {
     <div className="app-container">
       <nav className="navbar">
         <div className="container nav-content">
-          <Link to="/" className="logo">
+          <Link to="/products" className="logo">
             TPO<span>Market</span>
           </Link>
           <div className="nav-links">
-            <Link to="/products" className="nav-item">
-              Shop
-            </Link>
             <Link to="/favorites" className="nav-btn">
               Favoritos
             </Link>
@@ -41,15 +44,21 @@ function App() {
               Carrito
             </Link>
             {isAuthenticated ? (
-              <>
-                {user?.role === 'ADMIN' && (
-                  <Link to="/admin" className="nav-btn">Admin</Link>
-                )}
-                <span className="nav-user">Hola, {user?.name || user?.email || 'Usuario'}</span>
-                <button className="nav-btn" onClick={() => dispatch(logout())}>
-                  Logout
+              <div className="user-menu-container">
+                <button className="user-avatar">
+                  {getInitials(user?.name, user?.email)}
                 </button>
-              </>
+                <div className="user-dropdown">
+                  <span className="dropdown-greeting">Hola, <strong>{user?.name || user?.email?.split('@')[0] || 'Usuario'}</strong></span>
+                  <div className="dropdown-divider"></div>
+                  {user?.role === 'ADMIN' && (
+                    <Link to="/admin" className="dropdown-item">Administración</Link>
+                  )}
+                  <button className="dropdown-item logout-btn" onClick={() => dispatch(logout())}>
+                    Cerrar Sesión
+                  </button>
+                </div>
+              </div>
             ) : (
               <>
                 <Link to="/login" className="nav-btn">Login</Link>
