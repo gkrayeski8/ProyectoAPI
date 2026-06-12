@@ -4,6 +4,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { registerUser } from '../store/slices/authSlice';
 import './Login.css'; // Reusing Login.css for consistent auth styling
 
+/**
+ * Componente Register
+ * Renderiza el formulario de registro de usuario y se comunica con el store
+ * para realizar la creación de cuenta usando el thunk registerUser.
+ */
 export default function Register() {
   const [formData, setFormData] = useState({
     name: '',
@@ -14,15 +19,19 @@ export default function Register() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  // Extraemos el estado de carga y posible error desde el slice de autenticación
   const { loading, error } = useSelector(state => state.auth);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Manejador del envío del formulario
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Despachamos la acción asíncrona de registro con los datos del formulario
     dispatch(registerUser(formData)).then((result) => {
+      // Si la petición es exitosa, redirigimos al home
       if (!result.error) {
         navigate('/');
       }

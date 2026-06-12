@@ -5,6 +5,11 @@ import './ProductList.css';
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
+/**
+ * Componente ProductList
+ * Muestra la lista de productos disponibles en el marketplace y una barra lateral
+ * para filtrar los productos por categoría.
+ */
 const ProductList = () => {
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -12,7 +17,7 @@ const ProductList = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Cargar categorías al montar
+    // Cargar categorías al montar el componente (se ejecuta solo una vez)
     useEffect(() => {
         const fetchCategories = async () => {
             try {
@@ -28,7 +33,7 @@ const ProductList = () => {
         fetchCategories();
     }, []);
 
-    // Cargar products cada vez que cambia la categoría seleccionada
+    // Efecto para cargar products cada vez que cambia la categoría seleccionada en la barra lateral
     useEffect(() => {
         const fetchProducts = async () => {
             setLoading(true);
@@ -55,6 +60,8 @@ const ProductList = () => {
 
     // Eliminado el return temprano para que la barra lateral (sidebar) no desaparezca al cargar
 
+    // Normalizamos el formato de la lista de productos, ya que la API
+    // puede devolver un array directo o un objeto con distintas propiedades
     const items = Array.isArray(products)
         ? products
         : products?.products || products?.data || products?.items || [];

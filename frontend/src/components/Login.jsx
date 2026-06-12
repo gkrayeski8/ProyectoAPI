@@ -4,6 +4,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '../store/slices/authSlice';
 import './Login.css';
 
+/**
+ * Componente Login
+ * Renderiza el formulario de inicio de sesión de usuario y se comunica con el store (authSlice)
+ * para realizar la autenticación mediante el thunk loginUser.
+ */
 export default function Login() {
   const [formData, setFormData] = useState({
     email: '',
@@ -12,15 +17,19 @@ export default function Login() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  // Obtenemos el estado de carga y el posible error de autenticación desde Redux
   const { loading, error } = useSelector(state => state.auth);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Maneja el envío del formulario
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Despacha la acción asíncrona de login con las credenciales ingresadas
     dispatch(loginUser(formData)).then((result) => {
+      // Si la promesa se resuelve sin errores, navegamos al inicio
       if (!result.error) {
         navigate('/');
       }

@@ -4,12 +4,19 @@ import './ProductDetail.css';
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
+/**
+ * Componente ProductDetail
+ * Muestra la información detallada de un producto específico.
+ * Obtiene el ID del producto desde la URL y realiza una petición al backend.
+ */
 export default function ProductDetail() {
-  const { id } = useParams();
+  const { id } = useParams(); // Obtenemos el parámetro 'id' de la URL actual
   const [product, setProduct] = useState(null);
   const [cargando, setCargando] = useState(true);
 
+  // Efecto que se dispara al montar el componente o cuando cambia el ID
   useEffect(() => {
+    // Solicitamos el detalle del producto a la API
     fetch(`${BASE_URL}/publications/${id}`)
       .then((response) => {
         if (!response.ok) {
@@ -40,6 +47,7 @@ export default function ProductDetail() {
     );
   }
 
+  // Extraemos y normalizamos las propiedades del producto
   const img = product.urlImage || product.image || '';
   const title = product.titulo || product.name || 'Untitled Product';
   const price = product.price || 0;
