@@ -37,10 +37,10 @@ function App() {
             TPO<span>Market</span>
           </Link>
           <div className="nav-links">
-            <Link to="/favorites" className="nav-btn">
+            <Link to="/favorites">
               Favoritos
             </Link>
-            <Link to="/cart" className="nav-btn">
+            <Link to="/cart">
               Carrito
             </Link>
             {isAuthenticated ? (
