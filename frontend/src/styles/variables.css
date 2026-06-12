@@ -35,20 +35,28 @@
 }
 
 
-[data-theme='light'] {
-  --primary: #000000;
-  --primary-hover: #333333;
-  --secondary: #666666;
-  --accent: #111111;
+[data-theme='dark'] {
+  --primary: #ffffff;
+  --primary-hover: #e0e0e0;
+  --secondary: #999999;
   
-  --bg-main: #ffffff;
-  --bg-card: #fafafa;
-  --bg-header: rgba(255, 255, 255, 0.95);
+  /* Backgrounds */
+  --bg-main: #121212;
+  --bg-card: #1E1E1E;
+  --bg-header: rgba(18, 18, 18, 0.95);
+  --bg-input: #2C2C2E;
   
-  --text-primary: #000000;
-  --text-secondary: #555555;
-  --text-muted: #888888;
+  /* Text */
+  --text-primary: #FAFAFA;
+  --text-secondary: #A0A0A8;
+  --text-muted: #6D6D78;
   
-  --border-color: #eaeaea;
-  --shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.05);
+  /* Borders */
+  --border-color: #333333;
+  
+  /* Shadows */
+  --shadow-premium: 0 8px 30px rgba(0, 0, 0, 0.3);
+  --shadow-hover: 0 14px 40px rgba(0, 0, 0, 0.5);
+  
+  /* El color de acento (--accent) se hereda de :root para que el círculo inicial y los botones se mantengan color terracota */
 }
