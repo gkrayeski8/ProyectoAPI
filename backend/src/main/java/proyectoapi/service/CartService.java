@@ -142,6 +142,7 @@ public class CartService {
         dto.setId(item.getId());
         dto.setProductId(item.getProduct().getId());
         dto.setNameProduct(item.getProduct().getProduct().getTitulo());
+        dto.setUrlImage(item.getProduct().getProduct().getUrlImage());
         dto.setQuantity(item.getQuantity());
 
         // Convertimos el Integer del price a Double para el DTO

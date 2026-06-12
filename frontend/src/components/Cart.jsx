@@ -66,10 +66,16 @@ const Cart = () => {
           <div className="cart-items">
             {items.map((item) => (
               <div key={item.productId} className="cart-item">
+                {item.urlImage && (
+                  <div className="cart-item-image">
+                    <img src={item.urlImage} alt={item.nameProduct} />
+                  </div>
+                )}
                 <div className="cart-item-info">
-                  <h4>Producto ID: {item.productId}</h4>
+                  <h4>{item.nameProduct}</h4>
+                  <p>Precio Unitario: ${item.priceUnitario}</p>
                   <p>Cantidad: {item.quantity}</p>
-                  <p>Precio Unitario: ${item.price}</p>
+                  <p><strong>Subtotal: ${item.subtotal}</strong></p>
                 </div>
                 <div className="cart-item-actions">
                   <button 
