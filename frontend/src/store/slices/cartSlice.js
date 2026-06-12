@@ -75,6 +75,27 @@ export const clearCart = createAsyncThunk(
   }
 );
 
+export const checkoutCart = createAsyncThunk(
+  'cart/checkoutCart',
+  async ({ metodoPago, direccionEnvio }, { getState, rejectWithValue, dispatch }) => {
+    try {
+      const response = await fetch(`${BASE_URL}/sales/checkout`, {
+        method: 'POST',
+        headers: getAuthHeaders(getState),
+        body: JSON.stringify({ metodoPago, direccionEnvio })
+      });
+      if (!response.ok) throw new Error('Error al procesar el checkout');
+      
+      const data = await response.json();
+      // Si el checkout fue exitoso, limpiamos el carrito localmente
+      dispatch(clearCart());
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 const initialState = {
   items: [],
   total: 0,
@@ -111,6 +132,13 @@ export const cartSlice = createSlice({
       })
       // Clear Cart
       .addCase(clearCart.fulfilled, (state, action) => {
+        state.items = [];
+        state.total = 0;
+      })
+      // Checkout Cart
+      .addCase(checkoutCart.fulfilled, (state, action) => {
+        // El carrito ya se limpia disparando clearCart dentro del thunk,
+        // pero podemos asegurarnos aquí por si acaso
         state.items = [];
         state.total = 0;
       });

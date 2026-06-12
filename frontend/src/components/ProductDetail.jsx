@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCart } from '../store/slices/cartSlice';
 import './ProductDetail.css';
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
@@ -13,6 +15,11 @@ export default function ProductDetail() {
   const { id } = useParams(); // Obtenemos el parámetro 'id' de la URL actual
   const [product, setProduct] = useState(null);
   const [cargando, setCargando] = useState(true);
+  const [added, setAdded] = useState(false);
+  
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { token } = useSelector(state => state.auth);
 
   // Efecto que se dispara al montar el componente o cuando cambia el ID
   useEffect(() => {
@@ -55,6 +62,20 @@ export default function ProductDetail() {
   const category = product.category || 'General';
   const stock = product.stock ?? 0;
 
+  const handleAddToCart = () => {
+    if (!token) {
+      alert('Debes iniciar sesión para agregar al carrito');
+      navigate('/login');
+      return;
+    }
+    
+    if (stock > 0) {
+      dispatch(addToCart({ productId: product.id, quantity: 1 }));
+      setAdded(true);
+      setTimeout(() => setAdded(false), 2000);
+    }
+  };
+
   return (
     <div className="detail-page">
       <div className="detail-split">
@@ -86,8 +107,12 @@ export default function ProductDetail() {
 
           <p className="detail-description">{description}</p>
           
-          <button className="add-to-cart-btn">
-            Add to Cart
+          <button 
+            className="add-to-cart-btn" 
+            onClick={handleAddToCart}
+            disabled={stock <= 0 || added}
+          >
+            {added ? 'Agregado ✓' : (stock > 0 ? 'Add to Cart' : 'Sin Stock')}
           </button>
         </div>
       </div>

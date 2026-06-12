@@ -62,8 +62,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(autenticacion -> autenticacion.requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/publications/**").permitAll() // temporal
                         .requestMatchers("/api/users/product/**").permitAll() // .hasRole("VENDEDOR")
-                        .requestMatchers("/api/cart/**").hasRole("COMPRADOR")
-                        .requestMatchers("/api/compras/**").hasRole("COMPRADOR")
+                        .requestMatchers("/api/cart/**").hasAnyRole("COMPRADOR", "VENDEDOR", "ADMIN")
+                        .requestMatchers("/api/compras/**").hasAnyRole("COMPRADOR", "VENDEDOR", "ADMIN")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated());
 
