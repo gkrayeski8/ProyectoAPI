@@ -37,12 +37,16 @@ function App() {
             TPO<span>Market</span>
           </Link>
           <div className="nav-links">
-            <Link to="/favorites">
-              Favoritos
-            </Link>
-            <Link to="/cart">
-              Carrito
-            </Link>
+            {isAuthenticated && (
+              <>
+                <Link to="/favorites">
+                  Favoritos
+                </Link>
+                <Link to="/cart">
+                  Carrito
+                </Link>
+              </>
+            )}
             {isAuthenticated ? (
               <div className="user-menu-container">
                 <button className="user-avatar">
@@ -61,8 +65,8 @@ function App() {
               </div>
             ) : (
               <>
-                <Link to="/login" className="nav-btn">Login</Link>
-                <Link to="/register" className="nav-btn">Registro</Link>
+                <Link to="/login">Login</Link>
+                <Link to="/register">Registro</Link>
               </>
             )}
             <button onClick={toggleTheme} className="theme-toggle" aria-label="Toggle theme">

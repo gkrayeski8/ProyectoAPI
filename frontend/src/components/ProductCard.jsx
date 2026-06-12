@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './ProductCard.css';
 import imgNotFound from '../assets/images/no-image.jpg';
 import { useSelector, useDispatch } from 'react-redux';
@@ -14,7 +15,9 @@ const ProductCard = ({ product }) => {
 
     // Obtenemos los items favoritos del store para comprobar si este producto ya es favorito
     const favorites = useSelector(state => state.favorites.items);
+    const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
     const dispatch = useDispatch(); // Hook para despachar acciones (agregar/eliminar favoritos)
+    const navigate = useNavigate();
 
     // Normalización de las propiedades del producto para soportar diferentes formatos de API
     const id = product.id ?? product.codigo;
@@ -48,6 +51,11 @@ const ProductCard = ({ product }) => {
                 {/* Botón para alternar estado de favorito, interceptando el evento click para evitar navegar al detalle */}
                 <button className="favorite-btn" onClick={(e) => {
                     e.preventDefault(); // Prevenimos la navegación al link padre
+
+                    if (!isAuthenticated) {
+                        navigate('/login');
+                        return;
+                    }
 
                     // Despachamos la acción asíncrona correspondiente dependiendo de si es favorito o no
                     if (isFavorite) {

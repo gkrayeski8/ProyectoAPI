@@ -64,7 +64,6 @@ export default function ProductDetail() {
 
   const handleAddToCart = () => {
     if (!token) {
-      alert('Debes iniciar sesión para agregar al carrito');
       navigate('/login');
       return;
     }
