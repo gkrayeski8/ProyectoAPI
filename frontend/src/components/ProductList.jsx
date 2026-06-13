@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import ProductCard from './ProductCard';
 import './ProductList.css';
 
@@ -12,26 +12,10 @@ const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
  */
 const ProductList = () => {
     const [products, setProducts] = useState([]);
-    const [categories, setCategories] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState('');
+    const [searchParams] = useSearchParams();
+    const selectedCategory = searchParams.get('category') || '';
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
-    // Cargar categorías al montar el componente (se ejecuta solo una vez)
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const response = await fetch(`${BASE_URL}/publications/categories`);
-                if (response.ok) {
-                    const data = await response.json();
-                    setCategories(data);
-                }
-            } catch (err) {
-                console.error("Error al cargar categorías", err);
-            }
-        };
-        fetchCategories();
-    }, []);
 
     // Efecto para cargar products cada vez que cambia la categoría seleccionada en la barra lateral
     useEffect(() => {
@@ -68,28 +52,10 @@ const ProductList = () => {
 
     return (
         <div className="product-page">
-            <aside className="sidebar">
-                <h2 className="sidebar-title">Categorías</h2>
-                <ul className="category-list">
-                    <li
-                        className={`category-item ${selectedCategory === '' ? 'active' : ''}`}
-                        onClick={() => setSelectedCategory('')}
-                    >
-                        Todas las categorías
-                    </li>
-                    {categories.map(cat => (
-                        <li
-                            key={cat}
-                            className={`category-item ${selectedCategory === cat ? 'active' : ''}`}
-                            onClick={() => setSelectedCategory(cat)}
-                        >
-                            {cat}
-                        </li>
-                    ))}
-                </ul>
-            </aside>
             <div className="product-list-container">
-                <h1 className="product-list-title">Marketplace Explorer</h1>
+                <h1 className="product-list-title">
+                    {selectedCategory ? `Explorando: ${selectedCategory}` : 'Marketplace Explorer'}
+                </h1>
 
                 {loading ? (
                     <div className="spinner-container"><div className='spinner'></div></div>
