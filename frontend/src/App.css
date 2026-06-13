@@ -149,6 +149,19 @@
   gap: 1.5rem;
 }
 
+.nav-sell-btn {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.3s ease;
+  margin-left: 0.5rem;
+}
+
+.nav-sell-btn:hover {
+  color: var(--accent);
+}
+
 .nav-link-btn {
   background: transparent;
   border: none;

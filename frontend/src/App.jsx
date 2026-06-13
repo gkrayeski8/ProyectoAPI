@@ -9,6 +9,7 @@ import Register from './components/Register';
 import Favorites from './components/Favorites';
 import Cart from './components/Cart';
 import AdminPanel from './components/AdminPanel';
+import BecomeSeller from './components/BecomeSeller';
 import { Link, Routes, Route, useLocation } from 'react-router-dom';
 import './App.css';
 
@@ -73,6 +74,8 @@ function App() {
                 ))}
               </div>
             </div>
+            
+            <Link to="/become-seller" className="nav-sell-btn">Vender</Link>
           </div>
           
           <div className="nav-search-container">
@@ -142,6 +145,7 @@ function App() {
           <Route path="/products" element={<ProductList />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/become-seller" element={<BecomeSeller />} />
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/admin" element={<AdminPanel />} />
         </Routes>
