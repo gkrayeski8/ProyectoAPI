@@ -1,20 +1,15 @@
 # ── Stage 1: Build ──────────────────────────────────────────────────────────────
-FROM eclipse-temurin:17-jdk-alpine AS build
+FROM maven:3.8.5-openjdk-17-slim AS build
 
 WORKDIR /app
 
 # Copiar descriptor de dependencias primero (mejor cache de layers)
 COPY pom.xml .
-COPY .mvn/ .mvn/
-COPY mvnw .
-RUN chmod +x mvnw
-
-# Descargar dependencias (cacheado si pom.xml no cambia)
-RUN ./mvnw dependency:go-offline -q
+RUN mvn dependency:go-offline -B
 
 # Copiar código fuente y compilar
 COPY src/ src/
-RUN ./mvnw package -DskipTests -q
+RUN mvn package -DskipTests -B
 
 # ── Stage 2: Run ────────────────────────────────────────────────────────────────
 FROM eclipse-temurin:17-jre-alpine

@@ -17,7 +17,7 @@ export const loginUser = createAsyncThunk(
       }
       const data = await response.json();
       localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify({ id: data.id, name: data.name, email: data.email, role: data.role }));
+      localStorage.setItem('user', JSON.stringify({ id: data.id, name: data.name, apellido: data.apellido, email: data.email, role: data.role }));
       return data;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -39,7 +39,7 @@ export const registerUser = createAsyncThunk(
       }
       const data = await response.json();
       localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify({ id: data.id, name: data.name, email: data.email, role: data.role }));
+      localStorage.setItem('user', JSON.stringify({ id: data.id, name: data.name, apellido: data.apellido, email: data.email, role: data.role }));
       return data;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -80,7 +80,13 @@ export const authSlice = createSlice({
         state.loading = false;
         state.isAuthenticated = true;
         state.token = action.payload.token;
-        state.user = action.payload; // Ajustar según lo que devuelva el DTO
+        state.user = {
+          id: action.payload.id,
+          name: action.payload.name,
+          apellido: action.payload.apellido,
+          email: action.payload.email,
+          role: action.payload.role,
+        };
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -95,7 +101,13 @@ export const authSlice = createSlice({
         state.loading = false;
         state.isAuthenticated = true;
         state.token = action.payload.token;
-        state.user = action.payload;
+        state.user = {
+          id: action.payload.id,
+          name: action.payload.name,
+          apellido: action.payload.apellido,
+          email: action.payload.email,
+          role: action.payload.role,
+        };
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;

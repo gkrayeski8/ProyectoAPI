@@ -123,7 +123,7 @@
 
 .add-to-cart-btn {
   padding: 1.2rem 3rem;
-  background-color: var(--primary);
+  background-color: var(--text-primary);
   color: var(--bg-main);
   font-size: 0.95rem;
   font-weight: 500;
@@ -131,10 +131,12 @@
   letter-spacing: 0.1em;
   transition: all 0.3s ease;
   width: fit-content;
+  border: 1px solid var(--border-color);
 }
 
 .add-to-cart-btn:hover {
-  background-color: var(--text-primary);
+  background-color: var(--accent);
+  color: white;
   transform: translateY(-2px);
 }
 

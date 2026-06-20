@@ -10,6 +10,7 @@ import Favorites from './components/Favorites';
 import Cart from './components/Cart';
 import AdminPanel from './components/AdminPanel';
 import BecomeSeller from './components/BecomeSeller';
+import Profile from './components/Profile';
 import { Link, Routes, Route, useLocation } from 'react-router-dom';
 import './App.css';
 
@@ -148,6 +149,7 @@ function App() {
           <Route path="/become-seller" element={<BecomeSeller />} />
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/admin" element={<AdminPanel />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </main>
 

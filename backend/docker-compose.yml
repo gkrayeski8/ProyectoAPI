@@ -10,7 +10,7 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_DATABASE: ecommerce_db3
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
@@ -30,9 +30,10 @@ services:
       db:
         condition: service_healthy
     environment:
-      # Solo se sobreescribe la URL para cambiar "localhost" por "db" (nombre del servicio Docker)
-      # El resto de configuración viene del application.properties original
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/ecommerce_db3?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ""
     env_file:
       - .env
     ports:

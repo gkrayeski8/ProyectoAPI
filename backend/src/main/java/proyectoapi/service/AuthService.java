@@ -37,21 +37,22 @@ public class AuthService {
                 detallesUser.getUser().getId(),
                 detallesUser.getUsername(),
                 detallesUser.getUser().getName(),
+                detallesUser.getUser().getApellido(),
                 detallesUser.getUser().getRole());
     }
 
     /** Registra un nuevo user y devuelve su token */
     public JwtResponseDTO registrarUser(UserRequestDTO peticion) {
         UserResponseDTO nuevoUser = userService.createUser(
-                peticion.getName(),
-                peticion.getApellido(),
-                peticion.getEmail(),
-                peticion.getPassword(),
-                peticion.getRole());
+            peticion.getName(),
+            peticion.getApellido(),
+            peticion.getEmail(),
+            peticion.getPassword(),
+            peticion.getRole());
 
         // Auto login despues del register
         Authentication autenticacion = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(peticion.getEmail(), peticion.getPassword()));
+            new UsernamePasswordAuthenticationToken(peticion.getEmail(), peticion.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(autenticacion);
         String jwt = jwtUtils.generarTokenJwt(autenticacion);
@@ -60,6 +61,7 @@ public class AuthService {
                 nuevoUser.getId(),
                 nuevoUser.getEmail(),
                 nuevoUser.getName(),
+                nuevoUser.getApellido(),
                 peticion.getRole());
     }
 }

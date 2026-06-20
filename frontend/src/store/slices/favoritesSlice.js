@@ -35,17 +35,16 @@ export const addFavoriteAsync = createAsyncThunk(
 
 // Thunk para eliminar un favorito
 export const deleteFavoriteAsync = createAsyncThunk(
+  'favorites/deleteFavorite',
   async (product, { getState, rejectWithValue }) => {
     try {
-      const response = await fetch(`${BASE_URL}/favorites/delete`,
-        {
-          method: 'DELETE',
-          headers: getAuthHeaders(getState),
-          body: JSON.stringify({ productId: product.id })
-        }
-      )
+      const productId = product.id ?? product.codigo;
+      const response = await fetch(`${BASE_URL}/favorites/product/${productId}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(getState)
+      });
       if (!response.ok) throw new Error('Error al eliminar favorito');
-      return product.id;
+      return productId;
     }
     catch (error) {
       return rejectWithValue(error.message);
@@ -83,7 +82,7 @@ export const favoritesSlice = createSlice({
       })
       .addCase(deleteFavoriteAsync.fulfilled, (state, action) => {
         state.loading = false;
-        state.items = state.items.filter(fav => fav.id !== action.payload);
+        state.items = state.items.filter(fav => (fav.id ?? fav.codigo) !== action.payload);
       })
       .addCase(deleteFavoriteAsync.rejected, (state, action) => {
         state.loading = false;
