@@ -24,11 +24,18 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
-    /** Obtiene all los products, opcionalmente filtrados por categoría y ordenados por título */
-    public List<ProductResponseDTO> getCatalogo(String category) {
+    /** Obtiene all los products, opcionalmente filtrados por categoría, búsqueda y ordenados por título */
+    public List<ProductResponseDTO> getCatalogo(String category, String search) {
         List<SaleProduct> products;
-        if (category != null && !category.isEmpty()) {
+        boolean hasCategory = category != null && !category.isEmpty();
+        boolean hasSearch = search != null && !search.isEmpty();
+
+        if (hasCategory && hasSearch) {
+            products = saleProductRepository.findByProductCategoryAndProductTituloContainingIgnoreCaseAndActivoTrueOrderByProductTituloAsc(category, search);
+        } else if (hasCategory) {
             products = saleProductRepository.findByProductCategoryAndActivoTrueOrderByProductTituloAsc(category);
+        } else if (hasSearch) {
+            products = saleProductRepository.findByProductTituloContainingIgnoreCaseAndActivoTrueOrderByProductTituloAsc(search);
         } else {
             products = saleProductRepository.findByActivoTrueOrderByProductTituloAsc();
         }

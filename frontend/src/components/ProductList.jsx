@@ -14,16 +14,22 @@ const ProductList = () => {
     const [products, setProducts] = useState([]);
     const [searchParams] = useSearchParams();
     const selectedCategory = searchParams.get('category') || '';
+    const searchQuery = searchParams.get('search') || '';
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Efecto para cargar products cada vez que cambia la categoría seleccionada en la barra lateral
+    // Efecto para cargar products cada vez que cambia la categoría seleccionada o el término de búsqueda
     useEffect(() => {
         const fetchProducts = async () => {
             setLoading(true);
             try {
-                const url = selectedCategory
-                    ? `${BASE_URL}/publications?category=${encodeURIComponent(selectedCategory)}`
+                const params = new URLSearchParams();
+                if (selectedCategory) params.append('category', selectedCategory);
+                if (searchQuery) params.append('search', searchQuery);
+
+                const queryString = params.toString();
+                const url = queryString 
+                    ? `${BASE_URL}/publications?${queryString}` 
                     : `${BASE_URL}/publications`;
 
                 const response = await fetch(url);
@@ -40,7 +46,7 @@ const ProductList = () => {
         };
 
         fetchProducts();
-    }, [selectedCategory]);
+    }, [selectedCategory, searchQuery]);
 
     // Eliminado el return temprano para que la barra lateral (sidebar) no desaparezca al cargar
 
@@ -50,11 +56,24 @@ const ProductList = () => {
         ? products
         : products?.products || products?.data || products?.items || [];
 
+    const getTitleText = () => {
+        if (selectedCategory && searchQuery) {
+            return `Resultados de "${searchQuery}" en ${selectedCategory}`;
+        }
+        if (selectedCategory) {
+            return `Explorando: ${selectedCategory}`;
+        }
+        if (searchQuery) {
+            return `Resultados de: "${searchQuery}"`;
+        }
+        return 'Marketplace Explorer';
+    };
+
     return (
         <div className="product-page">
             <div className="product-list-container">
                 <h1 className="product-list-title">
-                    {selectedCategory ? `Explorando: ${selectedCategory}` : 'Marketplace Explorer'}
+                    {getTitleText()}
                 </h1>
 
                 {loading ? (
