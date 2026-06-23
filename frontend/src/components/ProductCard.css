@@ -110,3 +110,34 @@
   stroke: white;
   fill: white;
 }
+
+.cart-btn {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background-color: var(--bg-card);
+  backdrop-filter: blur(4px);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-pill);
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.cart-btn:hover:not(:disabled) {
+  background-color: var(--accent);
+  color: white;
+  transform: scale(1.05);
+}
+
+.cart-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background-color: var(--bg-input);
+  color: var(--text-muted);
+}
