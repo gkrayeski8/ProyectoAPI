@@ -11,7 +11,7 @@ import Cart from './components/Cart';
 import AdminPanel from './components/AdminPanel';
 import BecomeSeller from './components/BecomeSeller';
 import Profile from './components/Profile';
-import { Link, Routes, Route, useLocation } from 'react-router-dom';
+import { Link, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import './App.css';
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
@@ -43,13 +43,30 @@ function App() {
     return 'U';
   };
   const location = useLocation();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isAuthenticated, user } = useSelector(state => state.auth);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     // Scroll to top on route change
     window.scrollTo(0, 0);
   }, [location.pathname]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const searchParam = params.get('search') || '';
+    setSearchQuery(searchParam);
+  }, [location.search]);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+    } else {
+      navigate('/products');
+    }
+  };
 
   return (
     <div className="app-container">      <header className="navbar">
@@ -79,15 +96,21 @@ function App() {
             <Link to="/become-seller" className="nav-sell-btn">Vender</Link>
           </div>
           
-          <div className="nav-search-container">
-            <input type="text" className="nav-search-input" placeholder="Buscar productos..." />
-            <button className="nav-search-btn" title="Buscar">
+          <form onSubmit={handleSearch} className="nav-search-container">
+            <input 
+              type="text" 
+              className="nav-search-input" 
+              placeholder="Buscar productos..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <button type="submit" className="nav-search-btn" title="Buscar">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
             </button>
-          </div>
+          </form>
           
           <div className="nav-right">
               {isAuthenticated && (

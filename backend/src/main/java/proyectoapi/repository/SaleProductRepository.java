@@ -16,4 +16,8 @@ public interface SaleProductRepository extends JpaRepository<SaleProduct, Long> 
     List<SaleProduct> findByActivoTrueOrderByProductTituloAsc();
 
     List<SaleProduct> findByProductCategoryAndActivoTrueOrderByProductTituloAsc(String category);
+
+    List<SaleProduct> findByProductTituloContainingIgnoreCaseAndActivoTrueOrderByProductTituloAsc(String query);
+
+    List<SaleProduct> findByProductCategoryAndProductTituloContainingIgnoreCaseAndActivoTrueOrderByProductTituloAsc(String category, String query);
 }

@@ -20,10 +20,12 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    /** Devuelve la lista completa de products en el catálogo, opcionalmente filtrada */
+    /** Devuelve la lista completa de products en el catálogo, opcionalmente filtrada por categoría o búsqueda */
     @GetMapping
-    public ResponseEntity<List<ProductResponseDTO>> getCatalogo(@RequestParam(required = false) String category) {
-        return ResponseEntity.ok(productService.getCatalogo(category));
+    public ResponseEntity<List<ProductResponseDTO>> getCatalogo(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String search) {
+        return ResponseEntity.ok(productService.getCatalogo(category, search));
     }
 
     /** Lista todas las categorías disponibles de products */
