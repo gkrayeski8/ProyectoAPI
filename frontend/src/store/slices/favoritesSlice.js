@@ -5,10 +5,11 @@ const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 // funcion para obtener los headers con el token (igual que en carrito)
 const getAuthHeaders = (getState) => {
   const token = getState().auth.token;
-  return {
-    "Authorization": `Bearer ${token}`,
-    "Content-Type": "application/json",
-  };
+  const headers = { 'Content-Type': 'application/json' };
+  if (token && token !== 'null' && token !== 'undefined') {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
 }
 
 
@@ -20,7 +21,8 @@ export const addFavoriteAsync = createAsyncThunk(
       const response = await fetch(`${BASE_URL}/favorites/add`, {
         method: 'POST',
         headers: getAuthHeaders(getState),
-        body: JSON.stringify({ productId: product.id })
+        body: JSON.stringify({ productId: product.id }),
+        credentials: 'include'
       });
       if (!response.ok) throw new Error("Error al agregar Favorito");
 
@@ -41,7 +43,8 @@ export const deleteFavoriteAsync = createAsyncThunk(
       const productId = product.id ?? product.codigo;
       const response = await fetch(`${BASE_URL}/favorites/product/${productId}`, {
         method: 'DELETE',
-        headers: getAuthHeaders(getState)
+        headers: getAuthHeaders(getState),
+        credentials: 'include'
       });
       if (!response.ok) throw new Error('Error al eliminar favorito');
       return productId;

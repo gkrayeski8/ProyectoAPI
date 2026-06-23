@@ -16,6 +16,7 @@ const api = {
     try {
       const response = await fetch(`${BASE_URL}${endpoint}`, {
         headers: getHeaders(requiresAuth),
+        credentials: 'include',
       });
       if (!response.ok) throw new Error('Network response was not ok');
       return await response.json();
@@ -31,6 +32,7 @@ const api = {
         method: 'POST',
         headers: getHeaders(requiresAuth),
         body: JSON.stringify(data),
+        credentials: 'include',
       });
       if (!response.ok) throw new Error('Network response was not ok');
       return await response.json();
@@ -46,6 +48,7 @@ const api = {
         method: 'PUT',
         headers: getHeaders(requiresAuth),
         body: JSON.stringify(data),
+        credentials: 'include',
       });
       if (!response.ok) throw new Error('Network response was not ok');
       return await response.json();
@@ -60,6 +63,7 @@ const api = {
       const response = await fetch(`${BASE_URL}${endpoint}`, {
         method: 'DELETE',
         headers: getHeaders(requiresAuth),
+        credentials: 'include',
       });
       if (!response.ok) throw new Error('Network response was not ok');
       return await response.json();

@@ -4,10 +4,11 @@ const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
 const getAuthHeaders = (getState) => {
   const token = getState().auth.token;
-  return {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
-  };
+  const headers = { 'Content-Type': 'application/json' };
+  if (token && token !== 'null' && token !== 'undefined') {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
 };
 
 export const publishProduct = createAsyncThunk(
@@ -17,7 +18,8 @@ export const publishProduct = createAsyncThunk(
       const response = await fetch(`${BASE_URL}/users/product/publish`, {
         method: 'POST',
         headers: getAuthHeaders(getState),
-        body: JSON.stringify(productData)
+        body: JSON.stringify(productData),
+        credentials: 'include'
       });
       
       if (!response.ok) {

@@ -62,6 +62,7 @@ public class UserService {
         response.setName(saved.getName());
         response.setApellido(saved.getApellido());
         response.setEmail(saved.getEmail());
+        response.setRole(saved.getRole());
         return response;
     }
 
@@ -181,6 +182,7 @@ public class UserService {
         response.setName(saved.getName());
         response.setApellido(saved.getApellido());
         response.setEmail(saved.getEmail());
+        response.setRole(saved.getRole());
         return response;
     }
 
@@ -195,6 +197,7 @@ public class UserService {
         response.setName(authUser.getName());
         response.setApellido(authUser.getApellido());
         response.setEmail(authUser.getEmail());
+        response.setRole(authUser.getRole());
         return response;
     }
 }

@@ -5,10 +5,11 @@ const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 // Función auxiliar para obtener los headers con el token
 const getAuthHeaders = (getState) => {
   const token = getState().auth.token;
-  return {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
-  };
+  const headers = { 'Content-Type': 'application/json' };
+  if (token && token !== 'null' && token !== 'undefined') {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
 };
 
 export const fetchCart = createAsyncThunk(
@@ -16,7 +17,8 @@ export const fetchCart = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     try {
       const response = await fetch(`${BASE_URL}/cart`, {
-        headers: getAuthHeaders(getState)
+        headers: getAuthHeaders(getState),
+        credentials: 'include'
       });
       if (!response.ok) throw new Error('Error al obtener carrito');
       return await response.json();
@@ -33,7 +35,8 @@ export const addToCart = createAsyncThunk(
       const response = await fetch(`${BASE_URL}/cart/add`, {
         method: 'POST',
         headers: getAuthHeaders(getState),
-        body: JSON.stringify({ productId, quantity })
+        body: JSON.stringify({ productId, quantity }),
+        credentials: 'include'
       });
       if (!response.ok) throw new Error('Error al agregar al carrito');
       return await response.json(); // Retorna el carrito actualizado
@@ -49,7 +52,8 @@ export const removeFromCart = createAsyncThunk(
     try {
       const response = await fetch(`${BASE_URL}/cart/product/${productId}`, {
         method: 'DELETE',
-        headers: getAuthHeaders(getState)
+        headers: getAuthHeaders(getState),
+        credentials: 'include'
       });
       if (!response.ok) throw new Error('Error al eliminar producto');
       return await response.json();
@@ -65,7 +69,8 @@ export const clearCart = createAsyncThunk(
     try {
       const response = await fetch(`${BASE_URL}/cart/clear`, {
         method: 'DELETE',
-        headers: getAuthHeaders(getState)
+        headers: getAuthHeaders(getState),
+        credentials: 'include'
       });
       if (!response.ok) throw new Error('Error al vaciar carrito');
       return await response.json();
@@ -82,7 +87,8 @@ export const checkoutCart = createAsyncThunk(
       const response = await fetch(`${BASE_URL}/sales/checkout`, {
         method: 'POST',
         headers: getAuthHeaders(getState),
-        body: JSON.stringify({ metodoPago, direccionEnvio })
+        body: JSON.stringify({ metodoPago, direccionEnvio }),
+        credentials: 'include'
       });
       if (!response.ok) throw new Error('Error al procesar el checkout');
       

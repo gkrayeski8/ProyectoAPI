@@ -12,6 +12,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -48,12 +49,24 @@ public class JwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    /** Extrae el token JWT de la cabecera Authorization */
+    /** Extrae el token JWT de la cabecera Authorization o de una cookie */
     private String extraerJwt(HttpServletRequest request) {
-        String cabeceraAuth = request.getHeader("Authorization");
+        // Primero intentamos extraer el token de la cookie "jwt"
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("jwt".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
 
+        // Si no está en las cookies (por ejemplo, para API tests), buscamos en la cabecera Authorization
+        String cabeceraAuth = request.getHeader("Authorization");
         if (StringUtils.hasText(cabeceraAuth) && cabeceraAuth.startsWith("Bearer ")) {
-            return cabeceraAuth.substring(7);
+            String token = cabeceraAuth.substring(7);
+            if (StringUtils.hasText(token) && !token.equals("null") && !token.equals("undefined")) {
+                return token;
+            }
         }
 
         return null;

@@ -83,6 +83,7 @@ public class UserController {
         dto.setName(user.getName());
         dto.setApellido(user.getApellido());
         dto.setEmail(user.getEmail());
+        dto.setRole(user.getRole());
         return dto;
     }
 }

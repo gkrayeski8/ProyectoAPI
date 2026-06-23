@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTheme } from './context/ThemeProvider.jsx';
 import { useSelector, useDispatch } from 'react-redux';
-import { logout } from './store/slices/authSlice';
+import { logoutUser, checkAuthSession } from './store/slices/authSlice';
 import ProductList from './components/ProductList';
 import ProductDetail from './components/ProductDetail';
 import Login from './components/Login';
@@ -47,6 +47,10 @@ function App() {
   const dispatch = useDispatch();
   const { isAuthenticated, user } = useSelector(state => state.auth);
   const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    dispatch(checkAuthSession());
+  }, [dispatch]);
 
   useEffect(() => {
     // Scroll to top on route change
@@ -147,7 +151,7 @@ function App() {
                     <Link to="/profile" className="dropdown-item">Mi Perfil</Link>
                     <Link to="/orders" className="dropdown-item">Mis Compras</Link>
                     <div className="dropdown-divider"></div>
-                    <button onClick={() => dispatch(logout())} className="dropdown-item text-danger">Cerrar Sesión</button>
+                    <button onClick={() => dispatch(logoutUser())} className="dropdown-item text-danger">Cerrar Sesión</button>
                   </div>
                 </div>
               ) : (
