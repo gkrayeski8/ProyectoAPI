@@ -1,9 +1,10 @@
-import React from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ProductCard.css';
 import imgNotFound from '../assets/images/no-image.jpg';
 import { useSelector, useDispatch } from 'react-redux';
 import { addFavoriteAsync, deleteFavoriteAsync } from '../store/slices/favoritesSlice';
+import { addToCart } from '../store/slices/cartSlice';
 
 
 /**
@@ -12,6 +13,8 @@ import { addFavoriteAsync, deleteFavoriteAsync } from '../store/slices/favorites
  * Permite agregar o eliminar el producto de los favoritos utilizando Redux.
  */
 const ProductCard = ({ product }) => {
+
+    const [added, setAdded] = useState(false);
 
     // Obtenemos los items favoritos del store para comprobar si este producto ya es favorito
     const favorites = useSelector(state => state.favorites.items);
@@ -24,10 +27,25 @@ const ProductCard = ({ product }) => {
     const name = product.titulo ?? product.name ?? 'Sin name';
     const price = product.price ?? 0;
     const img = product.urlImage ?? product.image ?? '';
-    const description = product.description ?? '';
+    const stock = product.stock ?? 1; // Por defecto asumimos que hay stock si no viene en el objeto
     
     // Verificamos si este producto en particular se encuentra en la lista global de favoritos
     const isFavorite = favorites.some(fav => fav.id === id);
+
+    const handleAddToCart = (e) => {
+        e.preventDefault(); // Prevenimos la navegación al link padre
+
+        if (!isAuthenticated) {
+            navigate('/login');
+            return;
+        }
+
+        if (stock > 0) {
+            dispatch(addToCart({ productId: id, quantity: 1 }));
+            setAdded(true);
+            setTimeout(() => setAdded(false), 2000);
+        }
+    };
 
     return (
         <div className="product-card">
@@ -48,6 +66,29 @@ const ProductCard = ({ product }) => {
                 <p className="product-price">
                     ${Number(price).toLocaleString('es-AR')}
                 </p>
+                {/* Botón para agregar directamente al carrito */}
+                <button 
+                    className="cart-btn" 
+                    onClick={handleAddToCart}
+                    disabled={stock <= 0 || added}
+                >
+                    {added ? (
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                            <span>✅</span>
+                            <span>Added</span>
+                        </div>
+                    ) : stock <= 0 ? (
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                            <span>🚫</span>
+                            <span>No Stock</span>
+                        </div>
+                    ) : (
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                            <span>🛒</span>
+                            <span>Add</span>
+                        </div>
+                    )}
+                </button>
                 {/* Botón para alternar estado de favorito, interceptando el evento click para evitar navegar al detalle */}
                 <button className="favorite-btn" onClick={(e) => {
                     e.preventDefault(); // Prevenimos la navegación al link padre
