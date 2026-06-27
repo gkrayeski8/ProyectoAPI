@@ -17,7 +17,6 @@ export const loginUser = createAsyncThunk(
         throw new Error('Credenciales inválidas');
       }
       const data = await response.json();
-      localStorage.setItem('user', JSON.stringify({ id: data.id, name: data.name, apellido: data.apellido, email: data.email, role: data.role }));
       return data;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -39,7 +38,6 @@ export const registerUser = createAsyncThunk(
         throw new Error('Error al registrar usuario');
       }
       const data = await response.json();
-      localStorage.setItem('user', JSON.stringify({ id: data.id, name: data.name, apellido: data.apellido, email: data.email, role: data.role }));
       return data;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -60,10 +58,8 @@ export const checkAuthSession = createAsyncThunk(
         throw new Error('Sesión no válida o expirada');
       }
       const data = await response.json();
-      localStorage.setItem('user', JSON.stringify({ id: data.id, name: data.name, apellido: data.apellido, email: data.email, role: data.role }));
       return data;
     } catch (error) {
-      localStorage.removeItem('user');
       return rejectWithValue(error.message);
     }
   }
@@ -102,8 +98,6 @@ export const becomeSeller = createAsyncThunk(
         throw new Error(errorData.message || 'Error al registrarse como vendedor');
       }
       const data = await response.json();
-      const stored = JSON.parse(localStorage.getItem('user') || '{}');
-      localStorage.setItem('user', JSON.stringify({ ...stored, role: data.role }));
       return data;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -111,12 +105,10 @@ export const becomeSeller = createAsyncThunk(
   }
 );
 
-const storedUser = localStorage.getItem('user');
-
 const initialState = {
-  user: storedUser ? JSON.parse(storedUser) : null,
-  token: null, // En memoria si fuera necesario, pero la cookie maneja la persistencia
-  isAuthenticated: !!storedUser,
+  user: null,
+  token: null, // El JWT viaja en la cookie HttpOnly, no en el store
+  isAuthenticated: false,
   loading: false,
   error: null,
 };
@@ -129,7 +121,7 @@ export const authSlice = createSlice({
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
-      localStorage.removeItem('token');
+      // redux-persist limpia su propia entrada; solo borramos la clave legacy
       localStorage.removeItem('user');
     },
   },
@@ -194,9 +186,12 @@ export const authSlice = createSlice({
       })
       .addCase(checkAuthSession.rejected, (state) => {
         state.loading = false;
-        state.isAuthenticated = false;
-        state.user = null;
-        state.token = null;
+        // Solo limpiamos la sesión si el usuario realmente no tenía datos guardados.
+        // Si hay user persistido (redux-persist), no lo borramos por un simple fallo de red.
+        if (!state.user) {
+          state.isAuthenticated = false;
+          state.token = null;
+        }
       })
       // Become Seller
       .addCase(becomeSeller.pending, (state) => {
