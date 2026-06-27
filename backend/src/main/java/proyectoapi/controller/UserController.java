@@ -76,6 +76,12 @@ public class UserController {
         return ResponseEntity.ok(userService.getMyProfile());
     }
 
+    /** Convierte al user autenticado en VENDEDOR */
+    @PutMapping("/become-seller")
+    public ResponseEntity<UserResponseDTO> becomeSeller() {
+        return ResponseEntity.ok(userService.becomeSeller());
+    }
+
     /** Convierte una entidad User a UserResponseDTO */
     private UserResponseDTO mapToDTO(User user) {
         UserResponseDTO dto = new UserResponseDTO();

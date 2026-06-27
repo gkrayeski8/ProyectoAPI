@@ -87,6 +87,30 @@ export const logoutUser = createAsyncThunk(
   }
 );
 
+// Thunk para convertir al usuario autenticado en VENDEDOR
+export const becomeSeller = createAsyncThunk(
+  'auth/becomeSeller',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${BASE_URL}/users/become-seller`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Error al registrarse como vendedor');
+      }
+      const data = await response.json();
+      const stored = JSON.parse(localStorage.getItem('user') || '{}');
+      localStorage.setItem('user', JSON.stringify({ ...stored, role: data.role }));
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 const storedUser = localStorage.getItem('user');
 
 const initialState = {
@@ -173,6 +197,19 @@ export const authSlice = createSlice({
         state.isAuthenticated = false;
         state.user = null;
         state.token = null;
+      })
+      // Become Seller
+      .addCase(becomeSeller.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(becomeSeller.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = { ...state.user, role: action.payload.role };
+      })
+      .addCase(becomeSeller.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });

@@ -1,49 +1,329 @@
+/* ── Layout principal ─────────────────────────────────────────────────────── */
 .become-seller-page {
   flex: 1;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 4rem 2rem;
+  min-height: calc(100vh - 80px);
   background-color: var(--bg-main);
 }
 
-.seller-hero {
-  text-align: center;
-  background-color: var(--bg-card);
-  padding: 4rem;
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-premium);
-  max-width: 600px;
+.seller-content {
+  display: flex;
+  width: 100%;
 }
 
-.seller-hero h1 {
-  font-family: var(--font-display);
-  font-size: 2.5rem;
-  color: var(--text-primary);
+/* ── Lado izquierdo (decorativo) ──────────────────────────────────────────── */
+.seller-left {
+  flex: 1.2;
+  background-color: var(--bg-card);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5rem 4rem;
+  border-right: 1px solid var(--border-color);
+}
+
+.seller-left-inner {
+  max-width: 480px;
+}
+
+.seller-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
   margin-bottom: 1.5rem;
 }
 
-.seller-hero p {
-  color: var(--text-secondary);
+.seller-headline {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  line-height: 1.1;
+  color: var(--text-primary);
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.03em;
+}
+
+.seller-tagline {
   font-size: 1.1rem;
-  margin-bottom: 2.5rem;
+  color: var(--text-secondary);
+  margin-bottom: 3rem;
   line-height: 1.6;
 }
 
-.btn-primary {
+.seller-benefits {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.seller-benefit-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.benefit-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.seller-benefit-item strong {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.2rem;
+}
+
+.seller-benefit-item p {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ── Lado derecho (acción) ────────────────────────────────────────────────── */
+.seller-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+}
+
+.seller-card {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.seller-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.seller-icon-badge {
+  font-size: 2rem;
+  width: 56px;
+  height: 56px;
+  background-color: var(--accent-light);
+  border-radius: var(--border-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+  transition: background-color 0.3s;
+}
+
+.seller-icon-badge.confirm {
+  background-color: rgba(72, 199, 142, 0.12);
+}
+
+.seller-card-header h2 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.seller-card-header p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── Info del usuario ─────────────────────────────────────────────────────── */
+.seller-user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background-color: var(--bg-input);
+  border-radius: var(--border-radius-md);
+}
+
+.seller-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
   background-color: var(--accent);
   color: white;
-  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.seller-user-info strong {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.seller-user-info span {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ── Botones ──────────────────────────────────────────────────────────────── */
+.btn-seller-primary {
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
   border-radius: var(--border-radius-pill);
-  font-size: 1.1rem;
-  font-weight: 500;
+  background-color: var(--accent);
+  color: white;
   border: none;
   cursor: pointer;
   box-shadow: 0 4px 15px var(--accent-light);
-  transition: transform 0.3s ease, background-color 0.3s ease;
+  transition: all 0.3s ease;
+  text-align: center;
+  text-decoration: none;
+  font-family: inherit;
 }
 
-.btn-primary:hover {
+.btn-seller-primary:hover:not(:disabled) {
   background-color: var(--accent-hover);
   transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(224, 122, 95, 0.3);
+}
+
+.btn-seller-primary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.btn-seller-secondary {
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: var(--border-radius-pill);
+  background-color: transparent;
+  color: var(--text-secondary);
+  border: 1.5px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.btn-seller-secondary:hover:not(:disabled) {
+  border-color: var(--text-secondary);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.btn-seller-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Confirmación ─────────────────────────────────────────────────────────── */
+.confirm-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background-color: rgba(59, 130, 246, 0.06);
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  border-radius: var(--border-radius-md);
+}
+
+.confirm-notice span {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.confirm-notice p {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.confirm-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ── Textos auxiliares ────────────────────────────────────────────────────── */
+.seller-terms {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.seller-login-hint {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.seller-register-link {
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.seller-register-link a {
+  color: var(--accent);
+  font-weight: 600;
+  margin-left: 0.4rem;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.seller-register-link a:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.seller-error {
+  padding: 0.9rem 1.1rem;
+  background-color: rgba(255, 71, 87, 0.08);
+  border: 1px solid rgba(255, 71, 87, 0.2);
+  border-radius: var(--border-radius-md);
+  color: #ff4757;
+  font-size: 0.9rem;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .seller-content {
+    flex-direction: column;
+  }
+
+  .seller-left {
+    padding: 3rem 2rem 2.5rem;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .seller-headline {
+    font-size: 2.5rem;
+  }
+
+  .seller-right {
+    padding: 3rem 1.5rem;
+  }
 }

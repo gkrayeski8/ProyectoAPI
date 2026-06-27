@@ -11,6 +11,8 @@ import Cart from './components/Cart';
 import AdminPanel from './components/AdminPanel';
 import BecomeSeller from './components/BecomeSeller';
 import Profile from './components/Profile';
+import SellerDashboard from './components/SellerDashboard';
+import PublishProduct from './components/PublishProduct';
 import { Link, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import './App.css';
 
@@ -97,7 +99,12 @@ function App() {
               </div>
             </div>
             
-            <Link to="/become-seller" className="nav-sell-btn">Vender</Link>
+            <Link
+              to={isAuthenticated && user?.role === 'VENDEDOR' ? '/seller-dashboard' : '/become-seller'}
+              className="nav-sell-btn"
+            >
+              Vender
+            </Link>
           </div>
           
           <form onSubmit={handleSearch} className="nav-search-container">
@@ -174,6 +181,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/become-seller" element={<BecomeSeller />} />
+          <Route path="/seller-dashboard" element={<SellerDashboard />} />
+          <Route path="/publish-product" element={<PublishProduct />} />
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/admin" element={<AdminPanel />} />
           <Route path="/profile" element={<Profile />} />

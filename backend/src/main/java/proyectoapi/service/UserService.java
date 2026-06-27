@@ -200,4 +200,28 @@ public class UserService {
         response.setRole(authUser.getRole());
         return response;
     }
+
+    /** Convierte al user autenticado en VENDEDOR si actualmente es COMPRADOR */
+    public UserResponseDTO becomeSeller() {
+        User authUser = getUserAutenticado();
+        if (authUser == null) {
+            throw new AccessDeniedException("Debes estar autenticado para realizar esta acción");
+        }
+        if (authUser.getRole() == Role.VENDEDOR) {
+            throw new BusinessLogicException("Ya sos vendedor en la plataforma");
+        }
+        if (authUser.getRole() == Role.ADMIN) {
+            throw new BusinessLogicException("Los administradores no pueden cambiar su rol");
+        }
+        authUser.setRole(Role.VENDEDOR);
+        User saved = userRepository.save(authUser);
+
+        UserResponseDTO response = new UserResponseDTO();
+        response.setId(saved.getId());
+        response.setName(saved.getName());
+        response.setApellido(saved.getApellido());
+        response.setEmail(saved.getEmail());
+        response.setRole(saved.getRole());
+        return response;
+    }
 }
