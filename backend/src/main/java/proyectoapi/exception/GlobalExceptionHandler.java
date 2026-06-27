@@ -61,7 +61,7 @@ public class GlobalExceptionHandler {
         ex.printStackTrace(); // Agregado para depuración
         ErrorResponseDTO errorResponse = new ErrorResponseDTO(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "Error interno del servidor. Por favor, contacte con el administrador.",
+                "Excepción: " + ex.getClass().getSimpleName() + " - " + ex.getMessage(),
                 LocalDateTime.now());
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
