@@ -13,13 +13,13 @@ const Cart = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { items, total, loading, error } = useSelector((state) => state.cart);
-  const { token } = useSelector((state) => state.auth);
+  const { isAuthenticated } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (token && isOpen) {
+    if (isAuthenticated && isOpen) {
       dispatch(fetchCart());
     }
-  }, [dispatch, token, isOpen]);
+  }, [dispatch, isAuthenticated, isOpen]);
 
   const handleCheckout = () => {
     const checkoutData = {
@@ -38,7 +38,7 @@ const Cart = ({ isOpen, onClose }) => {
     });
   };
 
-  if (!token) {
+  if (!isAuthenticated) {
     return (
       <div className={`cart-overlay ${isOpen ? 'open' : ''}`} onClick={onClose}>
         <div className={`cart-drawer ${isOpen ? 'open' : ''}`} onClick={(e) => e.stopPropagation()}>

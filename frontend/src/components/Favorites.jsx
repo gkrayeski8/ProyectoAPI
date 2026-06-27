@@ -5,9 +5,9 @@ import './Favorites.css';
 
 const Favorites = ({ isOpen, onClose }) => {
     const favorites = useSelector((state) => state.favorites.items);
-    const { token } = useSelector((state) => state.auth);
+    const { isAuthenticated } = useSelector((state) => state.auth);
 
-    if (!token) {
+    if (!isAuthenticated) {
         return (
             <div className={`fav-overlay ${isOpen ? 'open' : ''}`} onClick={onClose}>
                 <div className={`fav-drawer ${isOpen ? 'open' : ''}`} onClick={(e) => e.stopPropagation()}>
