@@ -33,6 +33,13 @@ public class SaleController {
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
+    /** Procesa una compra directa saltándose el carrito */
+    @PostMapping("/direct")
+    public ResponseEntity<SaleResponseDTO> directPurchase(@RequestBody proyectoapi.dto.DirectPurchaseRequestDTO request) {
+        SaleResponseDTO dto = saleService.directPurchase(getEmailAutenticado(), request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
+    }
+
     /** Lista todas las compras del user autenticado */
     @GetMapping("/mis-compras")
     public ResponseEntity<List<SaleResponseDTO>> getMisCompras() {

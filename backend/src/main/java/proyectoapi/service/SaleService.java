@@ -112,6 +112,52 @@ public class SaleService {
         return mapToDTO(saleGuardada);
     }
 
+    /** Procesa una compra directa de un solo producto sin usar el carrito */
+    public SaleResponseDTO directPurchase(String email, proyectoapi.dto.DirectPurchaseRequestDTO request) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new ResourceNotFoundException("User no encontrado");
+        }
+
+        SaleProduct productSale = saleProductRepository.findById(request.getProductId())
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
+
+        if (!productSale.isActivo()) {
+            throw new BusinessLogicException("El producto ya no está disponible.");
+        }
+
+        if (productSale.getStock() < request.getQuantity()) {
+            throw new BusinessLogicException("No hay stock suficiente.");
+        }
+
+        Sale sale = new Sale();
+        sale.setUser(user);
+        sale.setFechaSale(LocalDateTime.now());
+        sale.setDireccionEnvio(request.getDireccionEnvio());
+        sale.setMetodoPago(request.getMetodoPago());
+
+        // Descontar stock
+        productSale.setStock(productSale.getStock() - request.getQuantity());
+        saleProductRepository.save(productSale);
+
+        PurchaseItem compra = new PurchaseItem();
+        compra.setUser(user);
+        compra.setProduct(productSale);
+        compra.setQuantity(request.getQuantity());
+        compra.setFechaCompra(LocalDateTime.now());
+        compra.setPriceUnitario(productSale.getPrice().doubleValue());
+        compra.setSale(sale);
+
+        List<PurchaseItem> compras = new ArrayList<>();
+        compras.add(compra);
+
+        sale.setItems(compras);
+        sale.setTotal(compra.getPriceUnitario() * compra.getQuantity());
+
+        Sale saleGuardada = saleRepository.save(sale);
+        return mapToDTO(saleGuardada);
+    }
+
     /** Recupera el historial de compras del user autenticado */
     public List<SaleResponseDTO> getSalesPorUser(String email) {
         User user = userRepository.findByEmail(email);

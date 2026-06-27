@@ -19,7 +19,8 @@ export default function ProductDetail() {
   
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { token } = useSelector(state => state.auth);
+  const { isAuthenticated } = useSelector(state => state.auth);
+  const [buyLoading, setBuyLoading] = useState(false);
 
   // Efecto que se dispara al montar el componente o cuando cambia el ID
   useEffect(() => {
@@ -63,7 +64,7 @@ export default function ProductDetail() {
   const stock = product.stock ?? 0;
 
   const handleAddToCart = () => {
-    if (!token) {
+    if (!isAuthenticated) {
       navigate('/login');
       return;
     }
@@ -72,6 +73,44 @@ export default function ProductDetail() {
       dispatch(addToCart({ productId: product.id, quantity: 1 }));
       setAdded(true);
       setTimeout(() => setAdded(false), 2000);
+    }
+  };
+
+  const handleBuyNow = async () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+    
+    if (stock <= 0) return;
+    
+    setBuyLoading(true);
+    try {
+      const response = await fetch(`${BASE_URL}/sales/direct`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          productId: product.id,
+          quantity: 1,
+          metodoPago: 'Tarjeta de Crédito',
+          direccionEnvio: 'Mi Dirección 123'
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Error al realizar la compra');
+      }
+      
+      alert('¡La compra ha sido realizada con éxito!');
+      
+      // Actualizar el stock local para reflejar la venta
+      setProduct(prev => ({ ...prev, stock: prev.stock - 1 }));
+    } catch (error) {
+      console.error(error);
+      alert('Hubo un problema procesando tu compra.');
+    } finally {
+      setBuyLoading(false);
     }
   };
 
@@ -106,13 +145,22 @@ export default function ProductDetail() {
 
           <p className="detail-description">{description}</p>
           
-          <button 
-            className="add-to-cart-btn" 
-            onClick={handleAddToCart}
-            disabled={stock <= 0 || added}
-          >
-            {added ? 'Agregado ✓' : (stock > 0 ? 'Add to Cart' : 'Sin Stock')}
-          </button>
+          <div className="detail-actions">
+            <button 
+              className="add-to-cart-btn" 
+              onClick={handleAddToCart}
+              disabled={stock <= 0 || added}
+            >
+              {added ? 'Agregado ✓' : (stock > 0 ? 'Add to Cart' : 'Sin Stock')}
+            </button>
+            <button 
+              className="buy-now-btn" 
+              onClick={handleBuyNow}
+              disabled={stock <= 0 || buyLoading}
+            >
+              {buyLoading ? 'Procesando...' : 'Comprar ahora'}
+            </button>
+          </div>
         </div>
       </div>
     </div>
