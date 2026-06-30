@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { authSlice } from './authSlice';
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
@@ -23,7 +24,17 @@ export const publishProduct = createAsyncThunk(
       });
       
       if (!response.ok) {
-        throw new Error('Error al publicar el producto');
+        // Leer el cuerpo del error que devuelve el backend (ErrorResponseDTO)
+        let errorMsg = `Error ${response.status}: ${response.statusText}`;
+        try {
+          const errorBody = await response.json();
+          if (errorBody.message) {
+            errorMsg = errorBody.message;
+          }
+        } catch (_) {
+          // Si no se puede parsear el body, usamos el mensaje por defecto
+        }
+        throw new Error(errorMsg);
       }
       
       return await response.json();
@@ -50,6 +61,8 @@ export const productsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // Limpiar productos al cerrar sesión
+      .addCase(authSlice.actions.logout, () => initialState)
       .addCase(publishProduct.pending, (state) => {
         state.loading = true;
         state.error = null;

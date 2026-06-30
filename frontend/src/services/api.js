@@ -11,6 +11,23 @@ const getHeaders = (includeAuth = false) => {
   return headers;
 };
 
+/**
+ * Helper: extrae el mensaje de error real del backend (ErrorResponseDTO)
+ * en vez de mostrar un mensaje genérico.
+ */
+const handleResponseError = async (response) => {
+  let errorMsg = `Error ${response.status}: ${response.statusText}`;
+  try {
+    const errorBody = await response.json();
+    if (errorBody.message) {
+      errorMsg = errorBody.message;
+    }
+  } catch (_) {
+    // Si no se puede parsear el body, usamos el mensaje por defecto
+  }
+  throw new Error(errorMsg);
+};
+
 const api = {
   get: async (endpoint, requiresAuth = false) => {
     try {
@@ -18,7 +35,7 @@ const api = {
         headers: getHeaders(requiresAuth),
         credentials: 'include',
       });
-      if (!response.ok) throw new Error('Network response was not ok');
+      if (!response.ok) await handleResponseError(response);
       return await response.json();
     } catch (error) {
       console.error('API Error:', error);
@@ -34,7 +51,7 @@ const api = {
         body: JSON.stringify(data),
         credentials: 'include',
       });
-      if (!response.ok) throw new Error('Network response was not ok');
+      if (!response.ok) await handleResponseError(response);
       return await response.json();
     } catch (error) {
       console.error('API Error:', error);
@@ -50,7 +67,7 @@ const api = {
         body: JSON.stringify(data),
         credentials: 'include',
       });
-      if (!response.ok) throw new Error('Network response was not ok');
+      if (!response.ok) await handleResponseError(response);
       return await response.json();
     } catch (error) {
       console.error('API Error:', error);
@@ -65,7 +82,7 @@ const api = {
         headers: getHeaders(requiresAuth),
         credentials: 'include',
       });
-      if (!response.ok) throw new Error('Network response was not ok');
+      if (!response.ok) await handleResponseError(response);
       return await response.json();
     } catch (error) {
       console.error('API Error:', error);

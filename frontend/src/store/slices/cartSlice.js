@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { authSlice } from './authSlice';
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
@@ -115,6 +116,8 @@ export const cartSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      // Limpiar carrito al cerrar sesión
+      .addCase(authSlice.actions.logout, () => initialState)
       // Fetch Cart
       .addCase(fetchCart.pending, (state) => { state.loading = true; state.error = null; })
       .addCase(fetchCart.fulfilled, (state, action) => {

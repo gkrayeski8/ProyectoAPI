@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { authSlice } from './authSlice';
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
@@ -67,6 +68,8 @@ export const favoritesSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      // Limpiar favoritos al cerrar sesión
+      .addCase(authSlice.actions.logout, () => initialState)
       .addCase(addFavoriteAsync.pending, (state) => {
         state.loading = true;
         state.error = null;
