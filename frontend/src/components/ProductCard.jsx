@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ProductCard.css';
-import imgNotFound from '../assets/images/no-image.jpg';
+import imgNotFound from '../assets/images/no-image.jpg'; // Imagen de fallback si el producto no tiene foto
 import { useSelector, useDispatch } from 'react-redux';
 import { addFavoriteAsync, deleteFavoriteAsync } from '../store/slices/favoritesSlice';
 import { addToCart } from '../store/slices/cartSlice';
@@ -14,11 +14,11 @@ import { addToCart } from '../store/slices/cartSlice';
  */
 const ProductCard = ({ product }) => {
 
-    const [added, setAdded] = useState(false);
+    const [added, setAdded] = useState(false); // Estado visual temporal: muestra "Added ✅" tras agregar al carrito
 
     // Obtenemos los items favoritos del store para comprobar si este producto ya es favorito
     const favorites = useSelector(state => state.favorites.items);
-    const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+    const isAuthenticated = useSelector(state => state.auth.isAuthenticated); // Saber si el usuario está logueado
     const dispatch = useDispatch(); // Hook para despachar acciones (agregar/eliminar favoritos)
     const navigate = useNavigate();
 
@@ -32,30 +32,32 @@ const ProductCard = ({ product }) => {
     // Verificamos si este producto en particular se encuentra en la lista global de favoritos
     const isFavorite = favorites.some(fav => fav.id === id);
 
+    // Maneja el clic en el botón "Agregar al carrito"
     const handleAddToCart = (e) => {
         e.preventDefault(); // Prevenimos la navegación al link padre
 
         if (!isAuthenticated) {
-            navigate('/login');
+            navigate('/login'); // Redirigimos al login si no tiene sesión
             return;
         }
 
         if (stock > 0) {
             dispatch(addToCart({ productId: id, quantity: 1 }));
-            setAdded(true);
-            setTimeout(() => setAdded(false), 2000);
+            setAdded(true); // Activa el estado visual de "añadido"
+            setTimeout(() => setAdded(false), 2000); // Vuelve al estado normal tras 2 segundos
         }
     };
 
     return (
         <div className="product-card">
             <div className="image-container">
+                {/* Muestra la imagen del producto o el placeholder si no hay una */}
                 {img ? (
                     <img
                         src={img}
                         alt={name}
                         className="product-image"
-                        onError={(e) => { e.target.src = imgNotFound }}
+                        onError={(e) => { e.target.src = imgNotFound }} // Si falla la carga, usa el fallback
                     />
                 ) : (
                     <img src={imgNotFound} alt="No image" className="product-image" />
@@ -64,14 +66,15 @@ const ProductCard = ({ product }) => {
             <div className="product-info">
                 <h3 className="product-name">{name}</h3>
                 <p className="product-price">
-                    ${Number(price).toLocaleString('es-AR')}
+                    ${Number(price).toLocaleString('es-AR')} {/* Formatea el precio con separador de miles argentino */}
                 </p>
                 {/* Botón para agregar directamente al carrito */}
                 <button 
                     className="cart-btn" 
                     onClick={handleAddToCart}
-                    disabled={stock <= 0 || added}
+                    disabled={stock <= 0 || added} // Deshabilitado si no hay stock o si acaba de agregar
                 >
+                    {/* Texto e ícono del botón según el estado actual */}
                     {added ? (
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
                             <span>✅</span>
@@ -94,7 +97,7 @@ const ProductCard = ({ product }) => {
                     e.preventDefault(); // Prevenimos la navegación al link padre
 
                     if (!isAuthenticated) {
-                        navigate('/login');
+                        navigate('/login'); // Redirigimos al login si no tiene sesión
                         return;
                     }
 
@@ -105,6 +108,7 @@ const ProductCard = ({ product }) => {
                         dispatch(addFavoriteAsync(product));
                     }
                 }}>
+                    {/* Ícono de corazón: relleno si es favorito, contorno si no lo es */}
                     {isFavorite ? (
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="#ff4757" stroke="#ff4757" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

@@ -11,17 +11,18 @@ import './BecomeSeller.css';
  * Incluye un paso de confirmación antes de despachar el thunk.
  */
 export default function BecomeSeller() {
-  const { isAuthenticated, user, loading, error } = useSelector(state => state.auth);
+  const { isAuthenticated, user, loading, error } = useSelector(state => state.auth); // Estado de auth desde Redux
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [showConfirm, setShowConfirm] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false); // Controla si se muestra el paso de confirmación
 
-  // Si ya es vendedor, redirigir al dashboard
+  // Si ya es vendedor, redirigir directamente al dashboard sin mostrar esta página
   if (isAuthenticated && user?.role === 'VENDEDOR') {
     navigate('/seller-dashboard');
-    return null;
+    return null; // No renderiza nada mientras navega
   }
 
+  // Despacha el thunk para convertirse en vendedor y redirige al dashboard si tiene éxito
   const handleConfirm = () => {
     dispatch(becomeSeller()).then(result => {
       if (!result.error) {
@@ -30,6 +31,7 @@ export default function BecomeSeller() {
     });
   };
 
+  // Lista de beneficios que se muestran en el panel izquierdo de la página
   const benefits = [
     { icon: '🛍️', title: 'Alcanzá más clientes', desc: 'Publicá tus productos y llegá a miles de compradores activos.' },
     { icon: '📊', title: 'Dashboard propio', desc: 'Gestioná tus publicaciones, stock y precios desde un panel centralizado.' },
@@ -40,7 +42,7 @@ export default function BecomeSeller() {
     <div className="become-seller-page">
       <div className="seller-content">
 
-        {/* Sección izquierda — decorativa */}
+        {/* Sección izquierda — decorativa con headline y lista de beneficios */}
         <div className="seller-left">
           <div className="seller-left-inner">
             <p className="seller-eyebrow">Para vendedores</p>
@@ -51,6 +53,7 @@ export default function BecomeSeller() {
               Únite a nuestra comunidad de vendedores y hacé crecer tu negocio.
             </p>
             <div className="seller-benefits">
+              {/* Renderiza cada beneficio como un ítem con ícono y descripción */}
               {benefits.map((b, i) => (
                 <div key={i} className="seller-benefit-item">
                   <span className="benefit-icon">{b.icon}</span>
@@ -64,12 +67,12 @@ export default function BecomeSeller() {
           </div>
         </div>
 
-        {/* Sección derecha — acción */}
+        {/* Sección derecha — tarjeta de acción */}
         <div className="seller-right">
           <div className="seller-card">
 
+            {/* Vista inicial: muestra info y el botón de acción */}
             {!showConfirm ? (
-              /* Vista inicial */
               <>
                 <div className="seller-card-header">
                   <div className="seller-icon-badge">🏪</div>
@@ -77,16 +80,18 @@ export default function BecomeSeller() {
                   <p>Accedé a todas las herramientas para gestionar tu negocio en la plataforma.</p>
                 </div>
 
+                {/* Si está logueado como COMPRADOR, muestra sus datos y el botón para continuar */}
                 {isAuthenticated ? (
-                  /* Logueado como COMPRADOR */
                   <>
                     <div className="seller-user-info">
+                      {/* Muestra la inicial del nombre del usuario */}
                       <div className="seller-avatar">{user?.name?.charAt(0).toUpperCase() || 'U'}</div>
                       <div>
                         <strong>{user?.name} {user?.apellido}</strong>
                         <span>{user?.email}</span>
                       </div>
                     </div>
+                    {/* Al hacer clic avanza al paso de confirmación */}
                     <button
                       className="btn-seller-primary"
                       onClick={() => setShowConfirm(true)}
@@ -98,7 +103,7 @@ export default function BecomeSeller() {
                     </p>
                   </>
                 ) : (
-                  /* No logueado */
+                  /* Si no está logueado, pide que inicie sesión primero */
                   <>
                     <p className="seller-login-hint">
                       Necesitás tener una cuenta para registrarte como vendedor.
@@ -114,7 +119,7 @@ export default function BecomeSeller() {
                 )}
               </>
             ) : (
-              /* Paso de confirmación */
+              /* Paso de confirmación: le muestra al usuario el impacto de la acción */
               <>
                 <div className="seller-card-header">
                   <div className="seller-icon-badge confirm">✅</div>
@@ -125,26 +130,29 @@ export default function BecomeSeller() {
                   </p>
                 </div>
 
+                {/* Aviso de que el cambio es irreversible desde la plataforma */}
                 <div className="confirm-notice">
                   <span>ℹ️</span>
                   <p>Esta acción no se puede deshacer desde la plataforma. Si necesitás revertirla, contactá al soporte.</p>
                 </div>
 
+                {/* Muestra el error si el thunk becomeSeller falla */}
                 {error && (
                   <div className="seller-error">{error}</div>
                 )}
 
+                {/* Botones de confirmación y cancelación */}
                 <div className="confirm-actions">
                   <button
                     className="btn-seller-primary"
                     onClick={handleConfirm}
-                    disabled={loading}
+                    disabled={loading} // Deshabilitado mientras se procesa
                   >
                     {loading ? 'Procesando...' : 'Sí, quiero ser Vendedor'}
                   </button>
                   <button
                     className="btn-seller-secondary"
-                    onClick={() => setShowConfirm(false)}
+                    onClick={() => setShowConfirm(false)} // Vuelve al paso anterior
                     disabled={loading}
                   >
                     Cancelar

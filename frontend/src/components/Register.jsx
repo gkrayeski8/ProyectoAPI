@@ -10,6 +10,7 @@ import './Login.css'; // Reusing Login.css for consistent auth styling
  * para realizar la creación de cuenta usando el thunk registerUser.
  */
 export default function Register() {
+  // Estado local con los campos del formulario de registro
   const [formData, setFormData] = useState({
     name: '',
     apellido: '',
@@ -22,13 +23,14 @@ export default function Register() {
   // Extraemos el estado de carga y posible error desde el slice de autenticación
   const { loading, error } = useSelector(state => state.auth);
 
+  // Actualiza el campo correspondiente en el estado cuando el usuario escribe
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   // Manejador del envío del formulario
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Evita que el formulario recargue la página
     // Despachamos la acción asíncrona de registro con los datos del formulario
     dispatch(registerUser(formData)).then((result) => {
       // Si la petición es exitosa, redirigimos al home
@@ -41,11 +43,13 @@ export default function Register() {
   return (
     <div className="auth-page">
       <div className="auth-split">
+        {/* Panel decorativo izquierdo */}
         <div className="auth-image-side">
           <h1>Join<br/>Us</h1>
           <p>Create an account to unlock exclusive benefits.</p>
         </div>
         
+        {/* Panel derecho con el formulario de registro */}
         <div className="auth-form-side">
           <div className="auth-card">
             <div className="auth-header">
@@ -54,6 +58,7 @@ export default function Register() {
             </div>
 
             <form className="auth-form" onSubmit={handleSubmit}>
+              {/* Campo de nombre */}
               <div className="form-group">
                 <label className="form-label" htmlFor="name">Nombre</label>
                 <input
@@ -68,6 +73,7 @@ export default function Register() {
                 />
               </div>
 
+              {/* Campo de apellido */}
               <div className="form-group">
                 <label className="form-label" htmlFor="apellido">Apellido</label>
                 <input
@@ -82,6 +88,7 @@ export default function Register() {
                 />
               </div>
 
+              {/* Campo de email */}
               <div className="form-group">
                 <label className="form-label" htmlFor="email">Email</label>
                 <input
@@ -96,6 +103,7 @@ export default function Register() {
                 />
               </div>
 
+              {/* Campo de contraseña */}
               <div className="form-group">
                 <label className="form-label" htmlFor="password">Password</label>
                 <input
@@ -110,13 +118,16 @@ export default function Register() {
                 />
               </div>
 
+              {/* Muestra el error si el registro falla */}
               {error && <div className="error-message" style={{color: 'red', marginBottom: '10px'}}>{error}</div>}
 
+              {/* Botón de submit; deshabilitado mientras se procesa */}
               <button type="submit" className="btn-submit" disabled={loading}>
                 {loading ? 'Creating Account...' : 'Create Account'}
               </button>
             </form>
 
+            {/* Link para ir al login si ya tiene cuenta */}
             <div className="auth-footer">
               Already have an account?
               <Link to="/login" className="auth-link">Log in</Link>

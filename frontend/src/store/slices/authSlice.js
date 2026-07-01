@@ -1,8 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
+// URL base de la API; se lee del .env o usa el valor por defecto en local
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
-// Async Thunks para comunicarse con el backend
+// ── Async Thunks para comunicarse con el backend ──────────────────────────────
+
+// Thunk para iniciar sesión con email y contraseña
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (credentials, { rejectWithValue }) => {
@@ -11,19 +14,20 @@ export const loginUser = createAsyncThunk(
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials), // { mail, password } o { username, password }
-        credentials: 'include',
+        credentials: 'include',            // Envía/recibe cookies HttpOnly con el JWT
       });
       if (!response.ok) {
         throw new Error('Credenciales inválidas');
       }
       const data = await response.json();
-      return data;
+      return data; // El backend retorna el usuario y el token
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.message); // Propaga el error al estado de Redux
     }
   }
 );
 
+// Thunk para registrar un nuevo usuario en el sistema
 export const registerUser = createAsyncThunk(
   'auth/registerUser',
   async (userData, { rejectWithValue }) => {
@@ -31,7 +35,7 @@ export const registerUser = createAsyncThunk(
       const response = await fetch(`${BASE_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData),
+        body: JSON.stringify(userData), // { name, apellido, email, password }
         credentials: 'include',
       });
       if (!response.ok) {
@@ -45,31 +49,32 @@ export const registerUser = createAsyncThunk(
   }
 );
 
-// Thunk para verificar la sesión activa mediante la cookie
+// Thunk para verificar la sesión activa mediante la cookie HttpOnly
 export const checkAuthSession = createAsyncThunk(
   'auth/checkAuthSession',
   async (_, { rejectWithValue }) => {
     try {
       const response = await fetch(`${BASE_URL}/users/me`, {
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        credentials: 'include', // La cookie se envía automáticamente para validar la sesión
       });
       if (!response.ok) {
         throw new Error('Sesión no válida o expirada');
       }
       const data = await response.json();
-      return data;
+      return data; // Retorna los datos del usuario autenticado
     } catch (error) {
       return rejectWithValue(error.message);
     }
   }
 );
 
-// Thunk para cerrar la sesión en el servidor y limpiar localmente
+// Thunk para cerrar la sesión en el servidor y limpiar el estado local
 export const logoutUser = createAsyncThunk(
   'auth/logoutUser',
   async (_, { dispatch }) => {
     try {
+      // Llama al endpoint de logout para invalidar la cookie en el servidor
       await fetch(`${BASE_URL}/auth/logout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -78,6 +83,7 @@ export const logoutUser = createAsyncThunk(
     } catch (error) {
       console.error('Error al cerrar sesión en el servidor:', error);
     } finally {
+      // Siempre limpiamos el estado local, aunque falle la petición al servidor
       dispatch(authSlice.actions.logout());
     }
   }
@@ -98,44 +104,46 @@ export const becomeSeller = createAsyncThunk(
         throw new Error(errorData.message || 'Error al registrarse como vendedor');
       }
       const data = await response.json();
-      return data;
+      return data; // Retorna el usuario con el nuevo rol VENDEDOR
     } catch (error) {
       return rejectWithValue(error.message);
     }
   }
 );
 
+// Estado inicial del slice de autenticación
 const initialState = {
-  user: null,
-  token: null, // El JWT viaja en la cookie HttpOnly, no en el store
-  isAuthenticated: false,
-  loading: false,
-  error: null,
+  user: null,             // Objeto con los datos del usuario logueado (null si no hay sesión)
+  token: null,            // El JWT viaja en la cookie HttpOnly, no se guarda en el store
+  isAuthenticated: false, // Indica si hay una sesión activa
+  loading: false,         // true mientras se espera respuesta de alguna operación asíncrona
+  error: null,            // Mensaje de error de la última operación fallida
 };
 
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    // Limpia el estado de sesión para dejar al usuario deslogueado
     logout: (state) => {
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
-      // redux-persist limpia su propia entrada; solo borramos la clave legacy
-      localStorage.removeItem('user');
+      localStorage.removeItem('user'); // Borramos la clave legacy por si existía
     },
   },
   extraReducers: (builder) => {
     builder
-      // Login
+      // ── Login ────────────────────────────────────────────────────────────
       .addCase(loginUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+        state.loading = true;   // Mostramos spinner mientras se procesa el login
+        state.error = null;     // Limpiamos errores previos
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
         state.isAuthenticated = true;
-        state.token = action.payload.token;
+        state.token = action.payload.token; // Guardamos el token devuelto por el backend
+        // Guardamos solo los campos necesarios del usuario (evitamos datos innecesarios)
         state.user = {
           id: action.payload.id,
           name: action.payload.name,
@@ -146,16 +154,16 @@ export const authSlice = createSlice({
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload; // Mensaje de error para mostrar en el formulario
       })
-      // Register
+      // ── Register ─────────────────────────────────────────────────────────
       .addCase(registerUser.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.isAuthenticated = true;
+        state.isAuthenticated = true; // El registro loguea automáticamente al usuario
         state.token = action.payload.token;
         state.user = {
           id: action.payload.id,
@@ -169,13 +177,13 @@ export const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      // Check Auth Session
+      // ── Check Auth Session ────────────────────────────────────────────────
       .addCase(checkAuthSession.pending, (state) => {
-        state.loading = true;
+        state.loading = true; // Esperando respuesta del endpoint /users/me
       })
       .addCase(checkAuthSession.fulfilled, (state, action) => {
         state.loading = false;
-        state.isAuthenticated = true;
+        state.isAuthenticated = true; // La sesión es válida
         state.user = {
           id: action.payload.id,
           name: action.payload.name,
@@ -193,13 +201,14 @@ export const authSlice = createSlice({
           state.token = null;
         }
       })
-      // Become Seller
+      // ── Become Seller ─────────────────────────────────────────────────────
       .addCase(becomeSeller.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(becomeSeller.fulfilled, (state, action) => {
         state.loading = false;
+        // Actualizamos solo el rol en el objeto de usuario sin pisar el resto de sus datos
         state.user = { ...state.user, role: action.payload.role };
       })
       .addCase(becomeSeller.rejected, (state, action) => {

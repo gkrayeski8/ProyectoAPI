@@ -3,13 +3,14 @@ import { useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import './SellerDashboard.css';
 
-// Productos mock para la demo
+// Productos mock para la demo (hasta que el backend provea el endpoint de productos del vendedor)
 const MOCK_PRODUCTS = [
   { id: 1, titulo: 'Zapatillas Running Pro', category: 'Calzado', price: 45000, stock: 12, urlImage: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&h=200&fit=crop', activo: true },
   { id: 2, titulo: 'Mochila Urbana 30L', category: 'Accesorios', price: 18500, stock: 5, urlImage: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=300&h=200&fit=crop', activo: true },
   { id: 3, titulo: 'Auriculares Bluetooth', category: 'Electrónica', price: 32000, stock: 0, urlImage: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=200&fit=crop', activo: false },
 ];
 
+// Estadísticas hardcodeadas de ejemplo para mostrar en las tarjetas de resumen
 const STATS = [
   { label: 'Productos publicados', value: '3', icon: '📦', sub: '2 activos · 1 sin stock' },
   { label: 'Ventas este mes', value: '14', icon: '🛒', sub: 'Últimos 30 días' },
@@ -22,11 +23,11 @@ const STATS = [
  * Protegido: solo accesible para usuarios con rol VENDEDOR.
  */
 export default function SellerDashboard() {
-  const { isAuthenticated, user } = useSelector(state => state.auth);
+  const { isAuthenticated, user } = useSelector(state => state.auth); // Estado de autenticación
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('products');
+  const [activeTab, setActiveTab] = useState('products'); // Tab activa: 'products' o 'sales'
 
-  // Guardas de acceso
+  // Guarda de acceso: redirige al login si no hay sesión
   if (!isAuthenticated) {
     return (
       <div className="dashboard-guard">
@@ -36,6 +37,7 @@ export default function SellerDashboard() {
     );
   }
 
+  // Guarda de acceso: solo permite la entrada a usuarios con rol VENDEDOR
   if (user?.role !== 'VENDEDOR') {
     return (
       <div className="dashboard-guard">
@@ -56,6 +58,7 @@ export default function SellerDashboard() {
             <h1 className="dashboard-title">Hola, {user.name} 👋</h1>
             <p className="dashboard-subtitle">Acá podés gestionar tus publicaciones y ver tu actividad.</p>
           </div>
+          {/* Botón de acceso rápido para publicar un nuevo producto */}
           <button
             className="btn-publish-new"
             onClick={() => navigate('/publish-product')}
@@ -68,6 +71,7 @@ export default function SellerDashboard() {
       <div className="dashboard-body">
 
         {/* ── Stats ─────────────────────────────────────────────── */}
+        {/* Renderiza las tarjetas de estadísticas usando los datos hardcodeados */}
         <div className="stats-grid">
           {STATS.map((stat, i) => (
             <div key={i} className="stat-card">
@@ -75,16 +79,17 @@ export default function SellerDashboard() {
               <div className="stat-info">
                 <span className="stat-value">{stat.value}</span>
                 <span className="stat-label">{stat.label}</span>
-                <span className="stat-sub">{stat.sub}</span>
+                <span className="stat-sub">{stat.sub}</span> {/* Texto secundario con contexto */}
               </div>
             </div>
           ))}
         </div>
 
         {/* ── Tabs ──────────────────────────────────────────────── */}
+        {/* Navegación entre "Mis Productos" y "Mis Ventas" */}
         <div className="dashboard-tabs">
           <button
-            className={`dashboard-tab ${activeTab === 'products' ? 'active' : ''}`}
+            className={`dashboard-tab ${activeTab === 'products' ? 'active' : ''}`} // Clase 'active' si es la tab seleccionada
             onClick={() => setActiveTab('products')}
           >
             Mis Productos
@@ -97,7 +102,7 @@ export default function SellerDashboard() {
           </button>
         </div>
 
-        {/* ── Contenido ─────────────────────────────────────────── */}
+        {/* ── Contenido de la tab "Mis Productos" ───────────────── */}
         {activeTab === 'products' && (
           <div className="products-section">
             <div className="products-grid">
@@ -105,6 +110,7 @@ export default function SellerDashboard() {
                 <div key={product.id} className={`product-card-seller ${!product.activo ? 'inactive' : ''}`}>
                   <div className="product-card-img">
                     <img src={product.urlImage} alt={product.titulo} />
+                    {/* Badge que indica si el producto está activo o sin stock */}
                     <span className={`product-status-badge ${product.stock === 0 ? 'no-stock' : 'active'}`}>
                       {product.stock === 0 ? 'Sin stock' : 'Activo'}
                     </span>
@@ -117,6 +123,7 @@ export default function SellerDashboard() {
                       <span className="product-card-stock">{product.stock} en stock</span>
                     </div>
                   </div>
+                  {/* Acciones sobre el producto: editar precio o eliminar */}
                   <div className="product-card-actions">
                     <button className="btn-card-edit">Editar precio</button>
                     <button className="btn-card-delete">Eliminar</button>
@@ -124,7 +131,7 @@ export default function SellerDashboard() {
                 </div>
               ))}
 
-              {/* Card para agregar */}
+              {/* Card especial para agregar un nuevo producto */}
               <button className="product-card-add" onClick={() => navigate('/publish-product')}>
                 <span className="add-icon">+</span>
                 <span>Publicar nuevo producto</span>
@@ -133,6 +140,7 @@ export default function SellerDashboard() {
           </div>
         )}
 
+        {/* ── Contenido de la tab "Mis Ventas" (pendiente) ──────── */}
         {activeTab === 'sales' && (
           <div className="empty-tab">
             <span className="empty-icon">📋</span>

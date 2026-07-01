@@ -4,6 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { publishProduct, resetSuccess } from '../store/slices/productsSlice';
 import './PublishProduct.css';
 
+// Lista fija de categorías disponibles para seleccionar en el formulario
 const CATEGORIES = ['Electrónica', 'Ropa', 'Calzado', 'Accesorios', 'Hogar', 'Deportes', 'Libros', 'Juguetes', 'Otros'];
 
 /**
@@ -15,9 +16,10 @@ const CATEGORIES = ['Electrónica', 'Ropa', 'Calzado', 'Accesorios', 'Hogar', 'D
 export default function PublishProduct() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, error, success } = useSelector(state => state.products);
-  const { isAuthenticated, user } = useSelector(state => state.auth);
+  const { loading, error, success } = useSelector(state => state.products); // Estado de la publicación
+  const { isAuthenticated, user } = useSelector(state => state.auth);        // Datos de la sesión
 
+  // Estado local del formulario con los campos del producto
   const [formData, setFormData] = useState({
     titulo: '',
     description: '',
@@ -27,7 +29,7 @@ export default function PublishProduct() {
     price: '',
   });
 
-  // Guardas de acceso
+  // Guarda de acceso: si no está logueado, pide que inicie sesión
   if (!isAuthenticated) {
     return (
       <div className="publish-guard">
@@ -37,6 +39,7 @@ export default function PublishProduct() {
     );
   }
 
+  // Guarda de acceso: solo los vendedores pueden publicar productos
   if (user?.role !== 'VENDEDOR') {
     return (
       <div className="publish-guard">
@@ -46,7 +49,7 @@ export default function PublishProduct() {
     );
   }
 
-  // Si se publicó con éxito, mostramos confirmación y redirigimos
+  // Si se publicó con éxito, mostramos una pantalla de confirmación con opciones
   if (success) {
     return (
       <div className="publish-success-page">
@@ -55,15 +58,17 @@ export default function PublishProduct() {
           <h2>¡Producto publicado!</h2>
           <p>Tu producto ya está disponible en el catálogo de TPO Market.</p>
           <div className="success-actions">
+            {/* Resetea el formulario para publicar otro producto */}
             <button
               className="btn-publish-action primary"
               onClick={() => {
-                dispatch(resetSuccess());
+                dispatch(resetSuccess()); // Limpia el flag de éxito en Redux
                 setFormData({ titulo: '', description: '', category: '', urlImage: '', stock: '', price: '' });
               }}
             >
               Publicar otro producto
             </button>
+            {/* Navega al dashboard del vendedor */}
             <button
               className="btn-publish-action secondary"
               onClick={() => { dispatch(resetSuccess()); navigate('/seller-dashboard'); }}
@@ -76,16 +81,18 @@ export default function PublishProduct() {
     );
   }
 
+  // Actualiza el campo correspondiente en el estado del formulario cuando el usuario escribe
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Despacha el thunk de publicación convirtiendo stock y price a sus tipos numéricos correctos
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Evita el comportamiento por defecto del formulario
     dispatch(publishProduct({
       ...formData,
-      stock: parseInt(formData.stock, 10),
-      price: parseFloat(formData.price),
+      stock: parseInt(formData.stock, 10),  // Convierte el stock a entero
+      price: parseFloat(formData.price),    // Convierte el precio a decimal
     }));
   };
 
@@ -93,7 +100,7 @@ export default function PublishProduct() {
     <div className="publish-page">
       <div className="publish-content">
 
-        {/* Lado izquierdo */}
+        {/* Lado izquierdo: info y tips de venta */}
         <div className="publish-left">
           <Link to="/seller-dashboard" className="back-link">
             ← Volver al Dashboard
@@ -106,6 +113,7 @@ export default function PublishProduct() {
             <p className="publish-tagline">
               Completá el formulario y tu producto estará disponible para miles de compradores de forma inmediata.
             </p>
+            {/* Lista de consejos para mejorar las ventas */}
             <div className="publish-tips">
               <p className="tips-title">💡 Tips para vender más:</p>
               <ul>
@@ -118,11 +126,12 @@ export default function PublishProduct() {
           </div>
         </div>
 
-        {/* Lado derecho — formulario */}
+        {/* Lado derecho: formulario de publicación */}
         <div className="publish-right">
           <div className="publish-form-card">
             <form className="publish-form" onSubmit={handleSubmit}>
 
+              {/* Campo de título del producto */}
               <div className="form-group">
                 <label className="form-label" htmlFor="titulo">Título del producto</label>
                 <input
@@ -137,6 +146,7 @@ export default function PublishProduct() {
                 />
               </div>
 
+              {/* Campo de descripción (textarea para textos más largos) */}
               <div className="form-group">
                 <label className="form-label" htmlFor="description">Descripción</label>
                 <textarea
@@ -151,6 +161,7 @@ export default function PublishProduct() {
                 />
               </div>
 
+              {/* Fila con dos campos: categoría y stock */}
               <div className="form-row">
                 <div className="form-group">
                   <label className="form-label" htmlFor="category">Categoría</label>
@@ -163,6 +174,7 @@ export default function PublishProduct() {
                     required
                   >
                     <option value="">Seleccionar...</option>
+                    {/* Genera una opción por cada categoría definida en la constante CATEGORIES */}
                     {CATEGORIES.map(cat => (
                       <option key={cat} value={cat}>{cat}</option>
                     ))}
@@ -177,7 +189,7 @@ export default function PublishProduct() {
                     name="stock"
                     className="form-input"
                     placeholder="0"
-                    min="0"
+                    min="0" // No permite valores negativos
                     value={formData.stock}
                     onChange={handleChange}
                     required
@@ -185,10 +197,11 @@ export default function PublishProduct() {
                 </div>
               </div>
 
+              {/* Campo de precio con prefijo "$" visual */}
               <div className="form-group">
                 <label className="form-label" htmlFor="price">Precio (ARS)</label>
                 <div className="price-input-wrapper">
-                  <span className="price-prefix">$</span>
+                  <span className="price-prefix">$</span> {/* Símbolo decorativo del peso */}
                   <input
                     type="number"
                     id="price"
@@ -196,7 +209,7 @@ export default function PublishProduct() {
                     className="form-input price-input"
                     placeholder="0.00"
                     min="0"
-                    step="0.01"
+                    step="0.01" // Permite precios con decimales
                     value={formData.price}
                     onChange={handleChange}
                     required
@@ -204,6 +217,7 @@ export default function PublishProduct() {
                 </div>
               </div>
 
+              {/* Campo de URL de imagen con preview en tiempo real */}
               <div className="form-group">
                 <label className="form-label" htmlFor="urlImage">URL de la imagen</label>
                 <input
@@ -215,6 +229,7 @@ export default function PublishProduct() {
                   value={formData.urlImage}
                   onChange={handleChange}
                 />
+                {/* Preview de la imagen si el campo tiene valor */}
                 {formData.urlImage && (
                   <div className="image-preview">
                     <img src={formData.urlImage} alt="Preview" onError={e => e.target.style.display = 'none'} />
@@ -222,10 +237,12 @@ export default function PublishProduct() {
                 )}
               </div>
 
+              {/* Muestra el error si la publicación falla */}
               {error && (
                 <div className="publish-error">{error}</div>
               )}
 
+              {/* Botones de submit y cancelar */}
               <div className="publish-form-actions">
                 <button type="submit" className="btn-publish-submit" disabled={loading}>
                   {loading ? 'Publicando...' : 'Publicar Producto'}
@@ -233,7 +250,7 @@ export default function PublishProduct() {
                 <button
                   type="button"
                   className="btn-publish-cancel"
-                  onClick={() => navigate('/seller-dashboard')}
+                  onClick={() => navigate('/seller-dashboard')} // Vuelve al dashboard sin publicar
                   disabled={loading}
                 >
                   Cancelar
